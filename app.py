@@ -142,7 +142,7 @@ load_tasks()
 ai_service = AITaskPlanner()
 
 # Main header
-st.markdown('<h1 class="main-header">🤖 AI Task Planner</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header">🤖 AI Task Planner by Pushp Chehal</h1>', unsafe_allow_html=True)
 
 # Sidebar navigation
 st.sidebar.markdown("## 🧭 Navigation")
