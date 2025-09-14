@@ -89,22 +89,38 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Initialize session state
+# Initialize session state with user-specific data
 if 'tasks' not in st.session_state:
     st.session_state.tasks = []
 
-# Load tasks from file
+# Generate a unique user ID based on session
+if 'user_id' not in st.session_state:
+    import hashlib
+    import time
+    # Create a unique user ID based on session info
+    session_info = f"{st.session_state.get('session_id', '')}{time.time()}"
+    st.session_state.user_id = hashlib.md5(session_info.encode()).hexdigest()[:8]
+
+# User-specific file path
+def get_user_file_path():
+    return f"tasks_data_{st.session_state.user_id}.json"
+
+# Load tasks from user-specific file
 def load_tasks():
-    if os.path.exists('tasks_data.json'):
+    file_path = get_user_file_path()
+    if os.path.exists(file_path):
         try:
-            with open('tasks_data.json', 'r') as f:
+            with open(file_path, 'r') as f:
                 st.session_state.tasks = json.load(f)
         except:
             st.session_state.tasks = []
+    else:
+        st.session_state.tasks = []
 
-# Save tasks to file
+# Save tasks to user-specific file
 def save_tasks():
-    with open('tasks_data.json', 'w') as f:
+    file_path = get_user_file_path()
+    with open(file_path, 'w') as f:
         json.dump(st.session_state.tasks, f, indent=2, default=str)
 
 # Load tasks on startup
@@ -125,6 +141,24 @@ st.sidebar.markdown("## 🧭 Navigation")
 page = st.sidebar.selectbox("Choose a page", ["Dashboard", "Create Task", "My Tasks", "Analytics"])
 
 # Add some spacing
+st.sidebar.markdown("---")
+
+# User indicator
+st.sidebar.markdown("### 👤 Your Session")
+st.sidebar.info(f"User ID: `{st.session_state.user_id}`")
+st.sidebar.caption("Your tasks are private to this session")
+
+# Add some spacing
+st.sidebar.markdown("---")
+
+# Data management
+st.sidebar.markdown("### 🗂️ Data Management")
+if st.sidebar.button("🗑️ Clear All Tasks", type="secondary"):
+    st.session_state.tasks = []
+    save_tasks()
+    st.sidebar.success("All tasks cleared!")
+    st.rerun()
+
 st.sidebar.markdown("---")
 
 # Quick stats in sidebar

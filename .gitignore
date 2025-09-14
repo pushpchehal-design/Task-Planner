@@ -112,3 +112,4 @@ dmypy.json
 
 # Task data
 tasks_data.json
+tasks_data_*.json
