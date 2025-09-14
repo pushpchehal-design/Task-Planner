@@ -196,18 +196,18 @@ def show_dashboard(data):
     
     with col1:
         if st.button("➕ Create New Task", type="primary"):
-            st.session_state.page = "➕ Create Task"
-            st.rerun()
+            st.success("✅ Navigate to '➕ Create Task' in the sidebar to start creating your task!")
     
     with col2:
         if st.button("📋 View All Tasks"):
-            st.session_state.page = "📋 My Tasks"
-            st.rerun()
+            st.success("✅ Navigate to '📋 My Tasks' in the sidebar to view and manage your tasks!")
     
     with col3:
         if st.button("📊 View Analytics"):
-            st.session_state.page = "📊 Analytics & Reports"
-            st.rerun()
+            st.success("✅ Navigate to '📊 Analytics & Reports' in the sidebar to view your productivity insights!")
+    
+    # Navigation instructions
+    st.info("💡 **Tip:** Use the sidebar navigation menu to switch between different sections of the app.")
 
 def show_create_task(data):
     """Display the task creation form"""
