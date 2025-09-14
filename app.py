@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from typing import Dict, List, Any
 import uuid
+from ai_service import AITaskPlanner
 
 # Page configuration
 st.set_page_config(
@@ -63,66 +64,11 @@ def save_data(data):
     with open('tasks_data.json', 'w') as f:
         json.dump(data, f, indent=2, default=str)
 
-def generate_ai_milestones(task_name: str, category: str, start_date: datetime, end_date: datetime) -> List[Dict]:
-    """Generate AI-powered milestones for a task"""
-    duration = (end_date - start_date).days
-    
-    # Simple AI-like milestone generation based on task characteristics
-    milestones = []
-    
-    if "website" in task_name.lower() or "web" in task_name.lower():
-        milestones = [
-            {"name": "Research and Planning", "duration": max(1, duration // 6), "description": "Research requirements and create project plan"},
-            {"name": "Design and Wireframing", "duration": max(1, duration // 5), "description": "Create wireframes and design mockups"},
-            {"name": "Frontend Development", "duration": max(2, duration // 3), "description": "Build user interface and frontend components"},
-            {"name": "Backend Development", "duration": max(2, duration // 4), "description": "Implement server-side functionality"},
-            {"name": "Testing and Debugging", "duration": max(1, duration // 6), "description": "Test functionality and fix bugs"},
-            {"name": "Deployment and Launch", "duration": max(1, duration // 8), "description": "Deploy to production and launch"}
-        ]
-    elif "learn" in task_name.lower() or "study" in task_name.lower():
-        milestones = [
-            {"name": "Research Learning Resources", "duration": max(1, duration // 8), "description": "Find and organize learning materials"},
-            {"name": "Create Study Plan", "duration": max(1, duration // 10), "description": "Plan study schedule and milestones"},
-            {"name": "Begin Learning", "duration": max(2, duration // 3), "description": "Start learning and practicing"},
-            {"name": "Practice and Apply", "duration": max(2, duration // 4), "description": "Practice skills and apply knowledge"},
-            {"name": "Review and Assess", "duration": max(1, duration // 8), "description": "Review progress and assess learning"}
-        ]
-    elif "write" in task_name.lower() or "article" in task_name.lower():
-        milestones = [
-            {"name": "Research and Outline", "duration": max(1, duration // 4), "description": "Research topic and create outline"},
-            {"name": "First Draft", "duration": max(2, duration // 2), "description": "Write initial draft"},
-            {"name": "Review and Edit", "duration": max(1, duration // 4), "description": "Review and edit content"},
-            {"name": "Final Polish", "duration": max(1, duration // 8), "description": "Final review and polish"}
-        ]
-    else:
-        # Generic milestone generation
-        milestone_count = min(6, max(3, duration // 3))
-        milestone_duration = duration // milestone_count
-        
-        milestone_names = [
-            "Planning and Research",
-            "Initial Setup",
-            "Core Development",
-            "Testing and Refinement",
-            "Final Review",
-            "Completion"
-        ]
-        
-        for i in range(milestone_count):
-            milestones.append({
-                "name": milestone_names[i] if i < len(milestone_names) else f"Milestone {i+1}",
-                "duration": max(1, milestone_duration),
-                "description": f"Complete {milestone_names[i].lower() if i < len(milestone_names) else f'milestone {i+1}'}"
-            })
-    
-    # Adjust durations to fit within the total timeframe
-    total_allocated = sum(m["duration"] for m in milestones)
-    if total_allocated > duration:
-        scale_factor = duration / total_allocated
-        for milestone in milestones:
-            milestone["duration"] = max(1, int(milestone["duration"] * scale_factor))
-    
-    return milestones
+# Initialize AI service
+@st.cache_resource
+def get_ai_service():
+    """Get cached AI service instance"""
+    return AITaskPlanner()
 
 def calculate_efficiency_score(tasks_data: Dict) -> float:
     """Calculate overall efficiency score based on task completion patterns"""
@@ -161,6 +107,23 @@ def main():
         "📋 My Tasks",
         "📊 Analytics & Reports"
     ])
+    
+    # API Key Management
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("🔑 AI Configuration")
+    
+    # Check if API key is configured
+    ai_service = get_ai_service()
+    if ai_service.api_key:
+        st.sidebar.success("✅ Gemini API Connected")
+    else:
+        st.sidebar.warning("⚠️ API Key Required")
+        st.sidebar.markdown("""
+        **To enable AI features:**
+        1. Get API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+        2. Set environment variable: `GEMINI_API_KEY`
+        3. Or add to Streamlit secrets
+        """)
     
     # Deploy button in sidebar
     st.sidebar.markdown("---")
@@ -268,6 +231,12 @@ def show_create_task(data):
         with col2:
             end_date = st.date_input("📅 End Date", value=datetime.now().date() + timedelta(days=7))
         
+        # Additional context input
+        additional_context = st.text_area(
+            "💭 Additional Context (Optional)", 
+            placeholder="Provide any additional details about your task, goals, or constraints..."
+        )
+        
         # Submit button
         submitted = st.form_submit_button("🤖 Generate AI Milestones", type="primary")
         
@@ -277,9 +246,10 @@ def show_create_task(data):
             elif end_date <= start_date:
                 st.error("End date must be after start date!")
             else:
-                # Generate AI milestones
-                with st.spinner("🧠 AI is generating milestones..."):
-                    milestones = generate_ai_milestones(task_name, category, start_date, end_date)
+                # Get AI service and generate milestones
+                ai_service = get_ai_service()
+                with st.spinner("🧠 AI is analyzing your task and generating intelligent milestones..."):
+                    milestones = ai_service.generate_milestones(task_name, category, start_date, end_date, additional_context)
                 
                 # Create task object
                 task = {
@@ -305,8 +275,13 @@ def show_create_task(data):
                 # Show generated milestones
                 st.subheader("🧠 AI-Generated Milestones")
                 for i, milestone in enumerate(milestones):
-                    st.write(f"**{i+1}. {milestone['name']}** ({milestone['duration']} days)")
+                    priority_emoji = {"high": "🔴", "medium": "🟡", "low": "🟢"}.get(milestone.get('priority', 'medium'), "🟡")
+                    st.write(f"**{i+1}. {milestone['name']}** {priority_emoji} ({milestone['duration']} days)")
                     st.write(f"   {milestone['description']}")
+                    
+                    # Show dependencies if any
+                    if milestone.get('dependencies'):
+                        st.write(f"   📋 *Depends on: {', '.join(milestone['dependencies'])}*")
                 
                 st.info("🎯 Your task has been created! You can now track your progress in the 'My Tasks' section.")
 
@@ -453,12 +428,10 @@ def show_analytics(data):
     # AI Insights
     st.subheader("🧠 AI-Powered Insights & Recommendations")
     
-    insights = [
-        "💡 You're most productive on Tuesdays and Wednesdays",
-        "🎯 Personal tasks are completed 20% faster than estimated",
-        "📈 Consider breaking down Official tasks into smaller milestones",
-        "⏰ Try scheduling complex tasks in the morning when you're most focused"
-    ]
+    # Generate AI insights
+    ai_service = get_ai_service()
+    with st.spinner("🧠 Generating personalized insights..."):
+        insights = ai_service.generate_insights(data)
     
     for insight in insights:
         st.write(insight)
