@@ -41,33 +41,28 @@ class AITaskPlanner:
             prompt = f"""
             Break down this task into 3-5 specific, actionable steps: "{task_name}"
             
-            CRITICAL REQUIREMENT: You have exactly {duration_days} days total to complete this task. You MUST distribute ALL {duration_days} days across your milestones.
+            🚨 CRITICAL REQUIREMENT: You have exactly {duration_days} days total to complete this task. You MUST distribute ALL {duration_days} days across your milestones. DO NOT leave any days unallocated.
             
             Task Details:
             - Category: {category}
-            - Total time available: {duration_days} days (MUST USE ALL DAYS)
+            - Total time available: {duration_days} days (MUST USE ALL {duration_days} DAYS)
             - Additional context: {additional_context}
             
             Create specific action steps that someone would actually do to complete this task. Each step should be a concrete action, not a category or date.
             
-            Format your response as a detailed numbered list with descriptions:
+            Format your response EXACTLY like this:
             
             1. [Specific action step] - [X days]
-               [Brief description of what this step involves]
             
             2. [Specific action step] - [X days]
-               [Brief description of what this step involves]
             
             3. [Specific action step] - [X days]
-               [Brief description of what this step involves]
             
             4. [Specific action step] - [X days]
-               [Brief description of what this step involves]
             
             5. [Specific action step] - [X days]
-               [Brief description of what this step involves]
             
-            IMPORTANT: The sum of all milestone days MUST equal exactly {duration_days} days.
+            🚨 MANDATORY: The sum of all milestone days MUST equal exactly {duration_days} days. NO EXCEPTIONS.
             
             Example for a 10-day task:
             1. Research and planning - 2 days
@@ -85,7 +80,15 @@ class AITaskPlanner:
             5. Final review and completion - 2 days
             Total: 5+5+15+3+2 = 30 days ✓
             
-            For your {duration_days}-day task, distribute the time appropriately across milestones.
+            Example for a 108-day task:
+            1. Research and planning - 20 days
+            2. Initial setup and preparation - 25 days
+            3. Main implementation work - 45 days
+            4. Testing and refinement - 12 days
+            5. Final review and completion - 6 days
+            Total: 20+25+45+12+6 = 108 days ✓
+            
+            For your {duration_days}-day task, distribute the time appropriately across milestones. The total MUST equal {duration_days} days.
             """
             
             # Generate response
@@ -104,6 +107,7 @@ class AITaskPlanner:
     
     def _parse_ai_response(self, response_text: str, task_name: str, expected_total_days: int):
         """Parse AI response into milestone format with time allocation"""
+        import re
         milestones = []
         lines = response_text.strip().split('\n')
         
@@ -120,78 +124,54 @@ class AITaskPlanner:
                 continue
             
             # Skip lines that are clearly not milestones
-            if any(skip_word in line.lower() for skip_word in ['example', 'total:', 'requirements', 'important:', 'format', 'critical', 'for your', 'distribute the time']):
+            if any(skip_word in line.lower() for skip_word in ['example', 'total:', 'requirements', 'important:', 'format', 'critical', 'for your', 'distribute the time', 'break down', 'task details', 'additional context']):
                 continue
             
-            # Clean up the line
-            milestone_name = line
-            estimated_days = 1  # Default to 1 day
-            
-            # Remove common prefixes (1., 2., 3., etc.) and asterisks
-            import re
-            milestone_name = re.sub(r'^\d+\.\s*', '', milestone_name)
-            milestone_name = re.sub(r'\*\*', '', milestone_name)  # Remove double asterisks
-            milestone_name = re.sub(r'\*', '', milestone_name)    # Remove single asterisks
-            
-            # Extract time allocation and description
-            description = milestone_name  # Default description
-            
-            if ' - ' in milestone_name:
-                parts = milestone_name.split(' - ')
-                milestone_name = parts[0].strip()
-                time_part = parts[1].strip() if len(parts) > 1 else "1 day"
+            # Look for numbered list items (1., 2., 3., etc.)
+            if re.match(r'^\d+\.', line):
+                # Extract milestone name and time
+                milestone_name = line
+                estimated_days = 1  # Default to 1 day
                 
-                # Extract number from time part
-                time_match = re.search(r'(\d+)', time_part)
+                # Remove the number prefix (1., 2., etc.)
+                milestone_name = re.sub(r'^\d+\.\s*', '', milestone_name)
+                
+                # Look for time pattern: " - X days" or " - X day"
+                time_match = re.search(r'-\s*(\d+)\s*days?', line.lower())
                 if time_match:
                     estimated_days = int(time_match.group(1))
+                    # Remove the time part from the name
+                    milestone_name = re.sub(r'\s*-\s*\d+\s*days?', '', milestone_name, flags=re.IGNORECASE)
                 
-                # Use the full line as description for more context
-                description = line.strip()
-            else:
-                # Try to find time pattern at the end of the line
-                time_match = re.search(r'(\d+)\s*days?', line.lower())
-                if time_match:
-                    estimated_days = int(time_match.group(1))
+                # Clean up the milestone name
+                milestone_name = milestone_name.strip()
                 
-                # Use the full line as description
-                description = line.strip()
-            
-            # Extract name if there's a colon
-            if ':' in milestone_name:
-                milestone_name = milestone_name.split(':')[0].strip()
-            
-            # Skip if it's still empty or too short
-            if len(milestone_name) < 3:
-                continue
-            
-            # Filter out bad milestone names (metadata fields)
-            bad_names = ['category', 'total duration', 'start date', 'end date', 'additional context', 'task details', 'requirements', 'examples', 'important', 'format', 'critical']
-            if milestone_name.lower().strip() in bad_names:
-                continue
-            
-            # Skip if it contains metadata keywords
-            if any(keyword in milestone_name.lower() for keyword in ['category:', 'duration:', 'date:', 'context:', 'details:', 'example', 'total:', 'requirements']):
-                continue
-            
-            # Skip if it's just a number or very short
-            if len(milestone_name.strip()) < 5:
-                continue
-            
-            milestones.append({
-                'id': milestone_id,
-                'name': milestone_name,
-                'priority': 'Medium',
-                'progress': 0,
-                'completed': False,
-                'estimated_days': estimated_days,
-                'description': description
-            })
-            milestone_id += 1
+                # Skip if it's still empty or too short
+                if len(milestone_name) < 3:
+                    continue
+                
+                # Filter out bad milestone names
+                bad_names = ['category', 'total duration', 'start date', 'end date', 'additional context', 'task details', 'requirements', 'examples', 'important', 'format', 'critical']
+                if milestone_name.lower().strip() in bad_names:
+                    continue
+                
+                # Skip if it contains metadata keywords
+                if any(keyword in milestone_name.lower() for keyword in ['category:', 'duration:', 'date:', 'context:', 'details:', 'example', 'total:', 'requirements']):
+                    continue
+                
+                milestones.append({
+                    'id': milestone_id,
+                    'name': milestone_name,
+                    'priority': 'Medium',
+                    'progress': 0,
+                    'completed': False,
+                    'estimated_days': estimated_days,
+                    'description': line.strip()
+                })
+                milestone_id += 1
         
         # If we didn't get any milestones, use fallback
         if len(milestones) == 0:
-            st.sidebar.warning("No milestones parsed, using fallback")
             return self._get_fallback_milestones(task_name, "General", expected_total_days)
         
         # Validate total time allocation
