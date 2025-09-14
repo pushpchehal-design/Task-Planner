@@ -20,71 +20,31 @@ class AITaskPlanner:
             except:
                 self.api_key = None
         
-        # Debug API key status
+        # API key status
         if self.api_key:
-            # Show first and last 4 characters for debugging (masked)
+            # Show masked key for confirmation
             masked_key = f"{self.api_key[:4]}...{self.api_key[-4:]}" if len(self.api_key) > 8 else "***"
-            st.sidebar.info(f"API Key found: {masked_key}")
-            st.sidebar.info(f"Key length: {len(self.api_key)}")
-            st.sidebar.info(f"Key source: {'Environment' if os.getenv('GEMINI_API_KEY') else 'Streamlit Secrets'}")
+            st.sidebar.success(f"✅ Gemini API Connected ({masked_key})")
         else:
             st.sidebar.error("❌ No API key found!")
-            st.sidebar.error(f"Env var exists: {bool(os.getenv('GEMINI_API_KEY'))}")
-            try:
-                st.sidebar.error(f"Secrets exist: {bool(st.secrets.get('GEMINI_API_KEY'))}")
-            except:
-                st.sidebar.error("Secrets: Not accessible")
+            st.sidebar.info("💡 Please set GEMINI_API_KEY in Streamlit secrets")
         
         if self.api_key:
-            st.sidebar.info("🔧 Configuring Gemini API...")
-            genai.configure(api_key=self.api_key)
-            st.sidebar.info("✅ API configured successfully")
-            
-            # List available models for debugging
             try:
-                st.sidebar.info("🔍 Listing available models...")
-                models = genai.list_models()
-                available_models = [m.name for m in models if 'generateContent' in m.supported_generation_methods]
-                st.sidebar.info(f"✅ Found {len(available_models)} models")
-                st.sidebar.info(f"Available models: {available_models[:3]}...")  # Show first 3
-                
-                # Try different model names - prioritize working models
-                model_name = None
-                
-                # Try different model variations - prioritize flash models (higher free tier limits)
-                model_candidates = [
-                    'models/gemini-1.5-flash',      # Higher free tier limits
-                    'models/gemini-1.5-flash-latest', # Latest flash model
-                    'models/gemini-1.0-pro',        # Legacy model with different quotas
-                    'gemini-1.5-flash',
-                    'gemini-1.5-flash-latest',
-                    'gemini-1.0-pro',
-                    'models/gemini-1.5-pro',        # Lower priority due to quota limits
-                    'models/gemini-1.5-pro-latest',
-                    'gemini-1.5-pro'
-                ]
-                
-                for candidate in model_candidates:
-                    if candidate in available_models:
-                        model_name = candidate
-                        break
-                
-                # If no specific model found, use the first available
-                if not model_name and available_models:
-                    model_name = available_models[0]
-                elif not model_name:
-                    model_name = 'models/gemini-1.5-flash'  # Default fallback
-                
-                self.model = genai.GenerativeModel(model_name)
-                st.sidebar.success(f"Using model: {model_name}")
+                # Configure Gemini API
+                genai.configure(api_key=self.api_key)
+                # Use the reliable Flash model
+                self.model = genai.GenerativeModel('models/gemini-1.5-flash')
                 
             except Exception as e:
                 error_msg = str(e)
                 if "quota" in error_msg.lower() or "429" in error_msg:
                     st.sidebar.warning("⚠️ API quota exceeded. Using fallback milestones.")
-                    st.sidebar.info("💡 Try again later or upgrade your API plan")
+                elif "expired" in error_msg.lower() or "invalid" in error_msg.lower():
+                    st.sidebar.error("🚨 API key expired. Please update in Streamlit secrets.")
                 else:
-                    st.sidebar.error(f"Error listing models: {error_msg}")
+                    st.sidebar.error(f"❌ API error: {error_msg}")
+                
                 # Fallback to default
                 self.model = genai.GenerativeModel('models/gemini-1.5-flash')
         else:
