@@ -71,6 +71,54 @@
       ],
       "progress": 0,
       "status": "active"
+    },
+    {
+      "id": "391f567d-202d-4f0c-b88a-cd07a7765f66",
+      "name": "Learn python coding",
+      "category": "Personal",
+      "start_date": "2025-09-14",
+      "end_date": "2025-09-21",
+      "created_at": "2025-09-14 12:59:49",
+      "milestones": [
+        {
+          "name": "Set up Python Environment",
+          "duration": 1,
+          "description": "Download and install Python 3.x on your system. Choose a suitable IDE (e.g., VS Code, PyCharm) and install it.  Test the installation by running a simple 'Hello, world!' program.",
+          "completed": false
+        },
+        {
+          "name": "Learn Basic Syntax and Data Types",
+          "duration": 1,
+          "description": "Complete an online course or tutorial covering variables, data types (integers, floats, strings, booleans), operators, and basic input/output. Practice with numerous simple exercises.",
+          "completed": false
+        },
+        {
+          "name": "Master Control Flow (if/else, loops)",
+          "duration": 1,
+          "description": "Learn about conditional statements (if, elif, else) and loops (for, while). Practice with coding exercises involving these concepts, focusing on problem-solving.",
+          "completed": false
+        },
+        {
+          "name": "Introduction to Data Structures (Lists, Dictionaries)",
+          "duration": 1,
+          "description": "Understand and practice using lists and dictionaries.  Work through coding exercises involving manipulating and accessing data within these structures.",
+          "completed": false
+        },
+        {
+          "name": "Functions and Modules",
+          "duration": 1,
+          "description": "Learn how to define and use functions. Explore importing and using built-in and external modules (e.g., `math`, `random`).  Practice creating modular code.",
+          "completed": false
+        },
+        {
+          "name": "Simple Project: Number Guessing Game",
+          "duration": 1,
+          "description": "Design and implement a simple number guessing game to consolidate learned concepts.  This project should incorporate user input, conditional statements, loops, and functions.",
+          "completed": false
+        }
+      ],
+      "progress": 0,
+      "status": "active"
     }
   ],
   "completed_tasks": []

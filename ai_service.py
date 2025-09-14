@@ -18,7 +18,32 @@ class AITaskPlanner:
         
         if self.api_key:
             genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            # List available models for debugging
+            try:
+                models = genai.list_models()
+                available_models = [m.name for m in models if 'generateContent' in m.supported_generation_methods]
+                st.sidebar.info(f"Available models: {available_models}")
+                
+                # Try different model names
+                model_name = 'gemini-1.5-flash'
+                if model_name not in available_models:
+                    # Fallback to other available models
+                    if 'models/gemini-1.5-flash' in available_models:
+                        model_name = 'models/gemini-1.5-flash'
+                    elif 'models/gemini-1.5-pro' in available_models:
+                        model_name = 'models/gemini-1.5-pro'
+                    elif 'models/gemini-1.0-pro' in available_models:
+                        model_name = 'models/gemini-1.0-pro'
+                    else:
+                        model_name = available_models[0] if available_models else 'gemini-1.5-flash'
+                
+                self.model = genai.GenerativeModel(model_name)
+                st.sidebar.success(f"Using model: {model_name}")
+                
+            except Exception as e:
+                st.sidebar.error(f"Error listing models: {str(e)}")
+                # Fallback to default
+                self.model = genai.GenerativeModel('gemini-1.5-flash')
         else:
             self.model = None
             st.warning("⚠️ Gemini API key not found. Please set GEMINI_API_KEY in your environment variables or Streamlit secrets.")
