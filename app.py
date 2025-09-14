@@ -1,23 +1,20 @@
 import streamlit as st
-import pandas as pd
 import json
 import os
 from datetime import datetime, timedelta
+import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
-from typing import Dict, List, Any
-import uuid
 from ai_service import AITaskPlanner
 
 # Page configuration
 st.set_page_config(
-    page_title="🎯 AI Task Planner",
-    page_icon="🎯",
+    page_title="AI Task Planner",
+    page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
+# Custom CSS
 st.markdown("""
 <style>
     .main-header {
@@ -25,431 +22,240 @@ st.markdown("""
         font-weight: bold;
         text-align: center;
         margin-bottom: 2rem;
-        background: linear-gradient(90deg, #1f77b4, #2ca02c);
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
-    .metric-card {
-        background-color: #f0f2f6;
+    .task-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin: 1rem 0;
+        border-left: 4px solid #667eea;
+    }
+    .milestone-item {
+        background: #f8f9fa;
         padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #1f77b4;
+        border-radius: 8px;
+        margin: 0.5rem 0;
+        border-left: 3px solid #28a745;
     }
-    .success-card {
-        border-left-color: #2ca02c;
+    .completed {
+        border-left-color: #28a745;
+        background: #d4edda;
     }
-    .warning-card {
-        border-left-color: #ff7f0e;
-    }
-    .danger-card {
-        border-left-color: #d62728;
-    }
-    .stButton > button {
-        width: 100%;
-        border-radius: 0.5rem;
+    .in-progress {
+        border-left-color: #ffc107;
+        background: #fff3cd;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Data storage functions
-def load_data():
-    """Load tasks data from JSON file"""
+# Initialize session state
+if 'tasks' not in st.session_state:
+    st.session_state.tasks = []
+
+# Load tasks from file
+def load_tasks():
     if os.path.exists('tasks_data.json'):
-        with open('tasks_data.json', 'r') as f:
-            return json.load(f)
-    return {"tasks": [], "completed_tasks": []}
+        try:
+            with open('tasks_data.json', 'r') as f:
+                st.session_state.tasks = json.load(f)
+        except:
+            st.session_state.tasks = []
 
-def save_data(data):
-    """Save tasks data to JSON file"""
+# Save tasks to file
+def save_tasks():
     with open('tasks_data.json', 'w') as f:
-        json.dump(data, f, indent=2, default=str)
+        json.dump(st.session_state.tasks, f, indent=2, default=str)
 
-# Initialize AI service - always create fresh instance
+# Load tasks on startup
+load_tasks()
+
+# Initialize AI service
+@st.cache_resource
 def get_ai_service():
-    """Get fresh AI service instance"""
     return AITaskPlanner()
 
-def calculate_efficiency_score(tasks_data: Dict) -> float:
-    """Calculate overall efficiency score based on task completion patterns"""
-    if not tasks_data["completed_tasks"]:
-        return 0.0
-    
-    total_tasks = len(tasks_data["completed_tasks"])
-    on_time_tasks = sum(1 for task in tasks_data["completed_tasks"] 
-                       if task.get("completed_on_time", True))
-    
-    # Calculate time accuracy
-    time_accuracy = 0
-    for task in tasks_data["completed_tasks"]:
-        if task.get("estimated_duration") and task.get("actual_duration"):
-            accuracy = min(1.0, task["estimated_duration"] / task["actual_duration"])
-            time_accuracy += accuracy
-    
-    time_accuracy = time_accuracy / total_tasks if total_tasks > 0 else 0
-    
-    # Combine on-time rate and time accuracy
-    efficiency = (on_time_tasks / total_tasks * 0.6) + (time_accuracy * 0.4)
-    return round(efficiency * 10, 1)
+ai_service = get_ai_service()
 
-def main():
-    # Header
-    st.markdown('<h1 class="main-header">🎯 AI Task Planner</h1>', unsafe_allow_html=True)
-    
-    # Load data
-    data = load_data()
-    
-    # Sidebar navigation
-    st.sidebar.title("📋 Navigation")
-    page = st.sidebar.selectbox("Choose a page", [
-        "🏠 Dashboard",
-        "➕ Create Task", 
-        "📋 My Tasks",
-        "📊 Analytics & Reports"
-    ])
-    
-    # API Key Management
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("🔑 AI Configuration")
-    
-    # Check if API key is configured
-    ai_service = get_ai_service()
-    if ai_service.api_key:
-        st.sidebar.success("✅ Gemini API Connected")
-    else:
-        st.sidebar.warning("⚠️ API Key Required")
-        st.sidebar.markdown("""
-        **To enable AI features:**
-        1. Get API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-        2. Set environment variable: `GEMINI_API_KEY`
-        3. Or add to Streamlit secrets
-        """)
-    
-    # Deploy button in sidebar
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### 🚀 Deploy to Streamlit")
-    if st.sidebar.button("Deploy App", type="primary"):
-        st.sidebar.success("🚀 Ready for deployment!")
-        st.sidebar.markdown("""
-        **Deployment Steps:**
-        1. Push code to GitHub
-        2. Connect to Streamlit Cloud
-        3. Deploy with one click!
-        """)
-    
-    # Main content based on selected page
-    if page == "🏠 Dashboard":
-        show_dashboard(data)
-    elif page == "➕ Create Task":
-        show_create_task(data)
-    elif page == "📋 My Tasks":
-        show_my_tasks(data)
-    elif page == "📊 Analytics & Reports":
-        show_analytics(data)
+# Main header
+st.markdown('<h1 class="main-header">🤖 AI Task Planner</h1>', unsafe_allow_html=True)
 
-def show_dashboard(data):
-    """Display the main dashboard"""
-    st.header("📊 Dashboard Overview")
+# Sidebar navigation
+st.sidebar.title("Navigation")
+page = st.sidebar.selectbox("Choose a page", ["Dashboard", "Create Task", "My Tasks", "Analytics"])
+
+# Dashboard Page
+if page == "Dashboard":
+    st.header("📊 Dashboard")
     
-    # Key metrics
+    # Quick stats
     col1, col2, col3, col4 = st.columns(4)
     
+    total_tasks = len(st.session_state.tasks)
+    completed_tasks = len([t for t in st.session_state.tasks if t.get('status') == 'completed'])
+    in_progress_tasks = len([t for t in st.session_state.tasks if t.get('status') == 'in_progress'])
+    pending_tasks = total_tasks - completed_tasks - in_progress_tasks
+    
     with col1:
-        st.metric("📋 Total Tasks", len(data["tasks"]) + len(data["completed_tasks"]))
-    
+        st.metric("Total Tasks", total_tasks)
     with col2:
-        active_tasks = len(data["tasks"])
-        st.metric("🔄 Active Tasks", active_tasks)
-    
+        st.metric("Completed", completed_tasks)
     with col3:
-        completed_tasks = len(data["completed_tasks"])
-        st.metric("✅ Completed Tasks", completed_tasks)
-    
+        st.metric("In Progress", in_progress_tasks)
     with col4:
-        efficiency = calculate_efficiency_score(data)
-        st.metric("🎯 Efficiency Score", f"{efficiency}/10")
+        st.metric("Pending", pending_tasks)
     
     # Recent tasks
     st.subheader("📋 Recent Tasks")
-    if data["tasks"]:
-        for task in data["tasks"][-5:]:  # Show last 5 tasks
-            with st.expander(f"🎯 {task['name']} ({task['category']})"):
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.write(f"**Start Date:** {task['start_date']}")
-                    st.write(f"**End Date:** {task['end_date']}")
-                with col2:
-                    progress = task.get('progress', 0)
-                    st.progress(progress / 100)
-                    st.write(f"**Progress:** {progress}%")
-                
-                if task.get('milestones'):
-                    st.write("**Milestones:**")
-                    for i, milestone in enumerate(task['milestones']):
-                        status = "✅" if milestone.get('completed', False) else "⏳"
-                        st.write(f"{status} {milestone['name']}")
+    if st.session_state.tasks:
+        recent_tasks = st.session_state.tasks[-5:]  # Last 5 tasks
+        for task in reversed(recent_tasks):
+            with st.container():
+                st.markdown(f"""
+                <div class="task-card">
+                    <h4>{task['name']}</h4>
+                    <p><strong>Category:</strong> {task['category']}</p>
+                    <p><strong>Status:</strong> {task.get('status', 'pending').title()}</p>
+                    <p><strong>Due:</strong> {task['end_date']}</p>
+                </div>
+                """, unsafe_allow_html=True)
     else:
-        st.info("No active tasks. Create your first task to get started!")
-    
-    # Quick actions
-    st.subheader("⚡ Quick Actions")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("➕ Create New Task", type="primary"):
-            st.success("✅ Navigate to '➕ Create Task' in the sidebar to start creating your task!")
-    
-    with col2:
-        if st.button("📋 View All Tasks"):
-            st.success("✅ Navigate to '📋 My Tasks' in the sidebar to view and manage your tasks!")
-    
-    with col3:
-        if st.button("📊 View Analytics"):
-            st.success("✅ Navigate to '📊 Analytics & Reports' in the sidebar to view your productivity insights!")
-    
-    # Navigation instructions
-    st.info("💡 **Tip:** Use the sidebar navigation menu to switch between different sections of the app.")
+        st.info("No tasks yet. Create your first task!")
 
-def show_create_task(data):
-    """Display the task creation form"""
+# Create Task Page
+elif page == "Create Task":
     st.header("➕ Create New Task")
     
     with st.form("create_task_form"):
-        # Task name
-        task_name = st.text_input("📝 Task Name", placeholder="Enter your task name...")
-        
-        # Category selection
-        category = st.selectbox(
-            "📂 Category",
-            ["Personal", "Official", "Health", "Learning", "Finance", "Other"]
-        )
-        
-        # Date selection
         col1, col2 = st.columns(2)
+        
         with col1:
-            start_date = st.date_input("📅 Start Date", value=datetime.now().date())
+            task_name = st.text_input("Task Name", placeholder="Enter task name...")
+            category = st.selectbox("Category", ["Personal", "Work", "Health", "Learning", "Finance", "Other"])
+        
         with col2:
-            end_date = st.date_input("📅 End Date", value=datetime.now().date() + timedelta(days=7))
+            start_date = st.date_input("Start Date", value=datetime.now().date())
+            end_date = st.date_input("End Date", value=datetime.now().date() + timedelta(days=7))
         
-        # Additional context input
-        additional_context = st.text_area(
-            "💭 Additional Context (Optional)", 
-            placeholder="Provide any additional details about your task, goals, or constraints..."
-        )
+        additional_context = st.text_area("Additional Context (Optional)", 
+                                        placeholder="Provide any additional details about this task...")
         
-        # Submit button
-        submitted = st.form_submit_button("🤖 Generate AI Milestones", type="primary")
+        submitted = st.form_submit_button("Create Task with AI Milestones", type="primary")
         
         if submitted:
-            if not task_name:
-                st.error("Please enter a task name!")
-            elif end_date <= start_date:
-                st.error("End date must be after start date!")
-            else:
-                # Get AI service and generate milestones
-                ai_service = get_ai_service()
-                with st.spinner("🧠 AI is analyzing your task and generating intelligent milestones..."):
-                    milestones = ai_service.generate_milestones(task_name, category, start_date, end_date, additional_context)
-                
-                # Create task object
-                task = {
-                    "id": str(uuid.uuid4()),
-                    "name": task_name,
-                    "category": category,
-                    "start_date": start_date.strftime("%Y-%m-%d"),
-                    "end_date": end_date.strftime("%Y-%m-%d"),
-                    "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "milestones": [{"name": m["name"], "duration": m["duration"], 
-                                  "description": m["description"], "completed": False} for m in milestones],
-                    "progress": 0,
-                    "status": "active"
-                }
-                
-                # Add to data
-                data["tasks"].append(task)
-                save_data(data)
-                
-                st.success("✅ Task created successfully!")
-                st.balloons()
-                
-                # Show generated milestones
-                st.subheader("🧠 AI-Generated Milestones")
-                for i, milestone in enumerate(milestones):
-                    priority_emoji = {"high": "🔴", "medium": "🟡", "low": "🟢"}.get(milestone.get('priority', 'medium'), "🟡")
-                    st.write(f"**{i+1}. {milestone['name']}** {priority_emoji} ({milestone['duration']} days)")
-                    st.write(f"   {milestone['description']}")
+            if task_name and start_date and end_date:
+                if end_date > start_date:
+                    # Generate AI milestones
+                    with st.spinner("🤖 Generating AI-powered milestones..."):
+                        milestones = ai_service.generate_milestones(
+                            task_name, category, start_date, end_date, additional_context
+                        )
                     
-                    # Show dependencies if any
-                    if milestone.get('dependencies'):
-                        st.write(f"   📋 *Depends on: {', '.join(milestone['dependencies'])}*")
-                
-                st.info("🎯 Your task has been created! You can now track your progress in the 'My Tasks' section.")
+                    # Create task
+                    new_task = {
+                        'id': len(st.session_state.tasks) + 1,
+                        'name': task_name,
+                        'category': category,
+                        'start_date': start_date.strftime('%Y-%m-%d'),
+                        'end_date': end_date.strftime('%Y-%m-%d'),
+                        'status': 'pending',
+                        'milestones': milestones,
+                        'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    }
+                    
+                    st.session_state.tasks.append(new_task)
+                    save_tasks()
+                    
+                    st.success(f"✅ Task '{task_name}' created successfully with {len(milestones)} AI-generated milestones!")
+                    
+                    # Show generated milestones
+                    st.subheader("🎯 Generated Milestones")
+                    for milestone in milestones:
+                        st.markdown(f"""
+                        <div class="milestone-item">
+                            <strong>{milestone['name']}</strong><br>
+                            Priority: {milestone['priority']}<br>
+                            {milestone['description']}
+                        </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.error("End date must be after start date!")
+            else:
+                st.error("Please fill in all required fields!")
 
-def show_my_tasks(data):
-    """Display all tasks with management options"""
+# My Tasks Page
+elif page == "My Tasks":
     st.header("📋 My Tasks")
     
-    # Filter options
-    col1, col2 = st.columns(2)
-    with col1:
-        category_filter = st.selectbox("Filter by Category", ["All"] + list(set([task["category"] for task in data["tasks"]])))
-    with col2:
-        status_filter = st.selectbox("Filter by Status", ["All", "Active", "Completed"])
-    
-    # Display tasks
-    filtered_tasks = data["tasks"]
-    if category_filter != "All":
-        filtered_tasks = [task for task in filtered_tasks if task["category"] == category_filter]
-    
-    if not filtered_tasks:
-        st.info("No tasks found. Create your first task to get started!")
-        return
-    
-    for task in filtered_tasks:
-        with st.expander(f"🎯 {task['name']} ({task['category']}) - {task['progress']}% Complete"):
-            col1, col2 = st.columns([2, 1])
-            
-            with col1:
-                st.write(f"**Start Date:** {task['start_date']}")
-                st.write(f"**End Date:** {task['end_date']}")
-                st.write(f"**Created:** {task['created_at']}")
+    if st.session_state.tasks:
+        for task in st.session_state.tasks:
+            with st.expander(f"{task['name']} - {task['category']} ({task.get('status', 'pending').title()})"):
+                col1, col2 = st.columns([2, 1])
                 
-                # Progress bar
-                st.progress(task['progress'] / 100)
+                with col1:
+                    st.write(f"**Start Date:** {task['start_date']}")
+                    st.write(f"**End Date:** {task['end_date']}")
+                    st.write(f"**Status:** {task.get('status', 'pending').title()}")
                 
-                # Milestones
-                st.write("**Milestones:**")
-                for i, milestone in enumerate(task['milestones']):
-                    status = "✅" if milestone.get('completed', False) else "⏳"
-                    col_m1, col_m2 = st.columns([3, 1])
-                    with col_m1:
-                        st.write(f"{status} {milestone['name']}")
-                    with col_m2:
-                        if not milestone.get('completed', False):
-                            if st.button(f"Complete", key=f"complete_{task['id']}_{i}"):
-                                milestone['completed'] = True
-                                # Recalculate progress
-                                completed_milestones = sum(1 for m in task['milestones'] if m.get('completed', False))
-                                task['progress'] = int((completed_milestones / len(task['milestones'])) * 100)
-                                save_data(data)
-                                st.rerun()
-            
-            with col2:
-                # Days remaining calculation
-                end_date = datetime.strptime(task['end_date'], "%Y-%m-%d").date()
-                days_remaining = (end_date - datetime.now().date()).days
-                
-                if days_remaining > 0:
-                    st.metric("Days Remaining", days_remaining)
-                else:
-                    st.metric("Days Overdue", abs(days_remaining))
-                
-                # Action buttons
-                if st.button("📝 Edit", key=f"edit_{task['id']}"):
-                    st.info("Edit functionality coming soon!")
-                
-                if st.button("🗑️ Delete", key=f"delete_{task['id']}"):
-                    data["tasks"] = [t for t in data["tasks"] if t["id"] != task["id"]]
-                    save_data(data)
-                    st.rerun()
-                
-                if task['progress'] == 100:
-                    if st.button("✅ Mark Complete", key=f"complete_task_{task['id']}"):
-                        # Move to completed tasks
-                        task['completed_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                with col2:
+                    if st.button(f"Mark Complete", key=f"complete_{task['id']}"):
                         task['status'] = 'completed'
-                        data["completed_tasks"].append(task)
-                        data["tasks"] = [t for t in data["tasks"] if t["id"] != task["id"]]
-                        save_data(data)
-                        st.success("🎉 Task completed!")
+                        save_tasks()
                         st.rerun()
+                
+                # Show milestones
+                if 'milestones' in task:
+                    st.subheader("Milestones")
+                    for milestone in task['milestones']:
+                        milestone_status = "✅ Completed" if milestone.get('completed', False) else "⏳ Pending"
+                        st.write(f"• {milestone['name']} - {milestone_status}")
+                        
+                        if st.button(f"Toggle Milestone", key=f"milestone_{task['id']}_{milestone['id']}"):
+                            milestone['completed'] = not milestone.get('completed', False)
+                            save_tasks()
+                            st.rerun()
+    else:
+        st.info("No tasks created yet. Go to 'Create Task' to get started!")
 
-def show_analytics(data):
-    """Display analytics and reports"""
-    st.header("📊 Analytics & Performance Reports")
+# Analytics Page
+elif page == "Analytics":
+    st.header("📈 Analytics")
     
-    if not data["completed_tasks"] and not data["tasks"]:
-        st.info("No data available yet. Complete some tasks to see analytics!")
-        return
-    
-    # Performance Overview
-    st.subheader("📈 Performance Overview")
-    col1, col2, col3, col4 = st.columns(4)
-    
-    total_tasks = len(data["completed_tasks"])
-    on_time_tasks = sum(1 for task in data["completed_tasks"] if task.get("completed_on_time", True))
-    efficiency = calculate_efficiency_score(data)
-    
-    with col1:
-        st.metric("Total Tasks Completed", total_tasks)
-    with col2:
-        avg_completion = "85%" if total_tasks > 0 else "0%"
-        st.metric("Avg Completion Time", avg_completion)
-    with col3:
-        on_time_rate = f"{(on_time_tasks/total_tasks*100):.0f}%" if total_tasks > 0 else "0%"
-        st.metric("On-Time Rate", on_time_rate)
-    with col4:
-        st.metric("Efficiency Score", f"{efficiency}/10")
-    
-    # Category Performance
-    st.subheader("🎯 Category Performance")
-    if data["completed_tasks"]:
-        category_data = {}
-        for task in data["completed_tasks"]:
-            cat = task["category"]
-            if cat not in category_data:
-                category_data[cat] = {"total": 0, "completed": 0}
-            category_data[cat]["total"] += 1
-            category_data[cat]["completed"] += 1
+    if st.session_state.tasks:
+        # Task completion rate
+        completed = len([t for t in st.session_state.tasks if t.get('status') == 'completed'])
+        total = len(st.session_state.tasks)
+        completion_rate = (completed / total * 100) if total > 0 else 0
         
-        # Create category performance chart
-        categories = list(category_data.keys())
-        efficiency_scores = [80, 60, 90, 85][:len(categories)]  # Mock data
+        st.metric("Task Completion Rate", f"{completion_rate:.1f}%")
         
-        fig = px.bar(
-            x=categories,
-            y=efficiency_scores,
-            title="Efficiency by Category",
-            labels={"x": "Category", "y": "Efficiency Score"}
-        )
-        st.plotly_chart(fig, use_container_width=True)
-    
-    # Timeline Analysis
-    st.subheader("📅 Timeline Analysis")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("This Month", f"{len(data['completed_tasks'])}/{len(data['tasks']) + len(data['completed_tasks'])}")
-    with col2:
-        st.metric("Last Month", "6/8")
-    with col3:
-        st.metric("This Week", "4/6")
-    
-    # AI Insights
-    st.subheader("🧠 AI-Powered Insights & Recommendations")
-    
-    # Generate AI insights
-    ai_service = get_ai_service()
-    with st.spinner("🧠 Generating personalized insights..."):
-        insights = ai_service.generate_insights(data)
-    
-    for insight in insights:
-        st.write(insight)
-    
-    # Export options
-    st.subheader("🔍 Export Reports")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("📋 Export to PDF"):
-            st.info("PDF export coming soon!")
-    
-    with col2:
-        if st.button("📊 Export to CSV"):
-            st.info("CSV export coming soon!")
-    
-    with col3:
-        if st.button("📧 Email Report"):
-            st.info("Email report coming soon!")
+        # Category breakdown
+        categories = {}
+        for task in st.session_state.tasks:
+            cat = task['category']
+            categories[cat] = categories.get(cat, 0) + 1
+        
+        if categories:
+            df = pd.DataFrame(list(categories.items()), columns=['Category', 'Count'])
+            fig = px.pie(df, values='Count', names='Category', title="Tasks by Category")
+            st.plotly_chart(fig, use_container_width=True)
+        
+        # Status breakdown
+        statuses = {}
+        for task in st.session_state.tasks:
+            status = task.get('status', 'pending')
+            statuses[status] = statuses.get(status, 0) + 1
+        
+        if statuses:
+            df_status = pd.DataFrame(list(statuses.items()), columns=['Status', 'Count'])
+            fig_status = px.bar(df_status, x='Status', y='Count', title="Tasks by Status")
+            st.plotly_chart(fig_status, use_container_width=True)
+    else:
+        st.info("No data available yet. Create some tasks to see analytics!")
 
-if __name__ == "__main__":
-    main()
+# Footer
+st.markdown("---")
+st.markdown("🤖 **AI Task Planner** - Powered by Google Gemini AI")

@@ -1,125 +1,206 @@
-{
-  "tasks": [
-    {
-      "id": "093b33dd-ae3b-46a6-81da-d78a4e9433a5",
-      "name": "Create a presentation for the Board of management",
-      "category": "Official",
-      "start_date": "2025-09-12",
-      "end_date": "2025-09-14",
-      "created_at": "2025-09-14 12:13:18",
-      "milestones": [
-        {
-          "name": "Planning and Research",
-          "duration": 1,
-          "description": "Complete planning and research",
-          "completed": false
-        },
-        {
-          "name": "Initial Setup",
-          "duration": 1,
-          "description": "Complete initial setup",
-          "completed": false
-        },
-        {
-          "name": "Core Development",
-          "duration": 1,
-          "description": "Complete core development",
-          "completed": false
-        }
-      ],
-      "progress": 0,
-      "status": "active"
-    },
-    {
-      "id": "f0b8eae8-fb48-4967-9485-9533f72aa965",
-      "name": "Learn to cook Sushi",
-      "category": "Personal",
-      "start_date": "2025-09-14",
-      "end_date": "2025-09-20",
-      "created_at": "2025-09-14 12:19:50",
-      "milestones": [
-        {
-          "name": "Research Learning Resources",
-          "duration": 1,
-          "description": "Find and organize learning materials",
-          "completed": false
-        },
-        {
-          "name": "Create Study Plan",
-          "duration": 1,
-          "description": "Plan study schedule and milestones",
-          "completed": false
-        },
-        {
-          "name": "Begin Learning",
-          "duration": 1,
-          "description": "Start learning and practicing",
-          "completed": false
-        },
-        {
-          "name": "Practice and Apply",
-          "duration": 1,
-          "description": "Practice skills and apply knowledge",
-          "completed": false
-        },
-        {
-          "name": "Review and Assess",
-          "duration": 1,
-          "description": "Review progress and assess learning",
-          "completed": false
-        }
-      ],
-      "progress": 0,
-      "status": "active"
-    },
-    {
-      "id": "391f567d-202d-4f0c-b88a-cd07a7765f66",
-      "name": "Learn python coding",
-      "category": "Personal",
-      "start_date": "2025-09-14",
-      "end_date": "2025-09-21",
-      "created_at": "2025-09-14 12:59:49",
-      "milestones": [
-        {
-          "name": "Set up Python Environment",
-          "duration": 1,
-          "description": "Download and install Python 3.x on your system. Choose a suitable IDE (e.g., VS Code, PyCharm) and install it.  Test the installation by running a simple 'Hello, world!' program.",
-          "completed": false
-        },
-        {
-          "name": "Learn Basic Syntax and Data Types",
-          "duration": 1,
-          "description": "Complete an online course or tutorial covering variables, data types (integers, floats, strings, booleans), operators, and basic input/output. Practice with numerous simple exercises.",
-          "completed": false
-        },
-        {
-          "name": "Master Control Flow (if/else, loops)",
-          "duration": 1,
-          "description": "Learn about conditional statements (if, elif, else) and loops (for, while). Practice with coding exercises involving these concepts, focusing on problem-solving.",
-          "completed": false
-        },
-        {
-          "name": "Introduction to Data Structures (Lists, Dictionaries)",
-          "duration": 1,
-          "description": "Understand and practice using lists and dictionaries.  Work through coding exercises involving manipulating and accessing data within these structures.",
-          "completed": false
-        },
-        {
-          "name": "Functions and Modules",
-          "duration": 1,
-          "description": "Learn how to define and use functions. Explore importing and using built-in and external modules (e.g., `math`, `random`).  Practice creating modular code.",
-          "completed": false
-        },
-        {
-          "name": "Simple Project: Number Guessing Game",
-          "duration": 1,
-          "description": "Design and implement a simple number guessing game to consolidate learned concepts.  This project should incorporate user input, conditional statements, loops, and functions.",
-          "completed": false
-        }
-      ],
-      "progress": 0,
-      "status": "active"
-    }
-  ],
-  "completed_tasks": []
-}
+[
+  {
+    "id": 1,
+    "name": "Learn to make Biryani",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-09-21",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "1.  **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to make Biryani"
+      },
+      {
+        "id": 2,
+        "name": "2.  **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to make Biryani"
+      },
+      {
+        "id": 3,
+        "name": "3.  **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to make Biryani"
+      },
+      {
+        "id": 4,
+        "name": "4.  **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to make Biryani"
+      },
+      {
+        "id": 5,
+        "name": "5.  **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to make Biryani"
+      }
+    ],
+    "created_at": "2025-09-14 15:10:53"
+  },
+  {
+    "id": 2,
+    "name": "Learn Generative AI",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-12-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "1. **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn Generative AI"
+      },
+      {
+        "id": 2,
+        "name": "2. **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn Generative AI"
+      },
+      {
+        "id": 3,
+        "name": "3. **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn Generative AI"
+      },
+      {
+        "id": 4,
+        "name": "4. **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn Generative AI"
+      },
+      {
+        "id": 5,
+        "name": "5. **Milestone Name",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn Generative AI"
+      }
+    ],
+    "created_at": "2025-09-14 15:14:47"
+  },
+  {
+    "id": 3,
+    "name": "Learn python coding",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-12-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "*Complete Beginner's Python Course & 10 Coding Challenges",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn python coding"
+      },
+      {
+        "id": 2,
+        "name": "*Build a Text-Based Game using Functions and Modules",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn python coding"
+      },
+      {
+        "id": 3,
+        "name": "*Develop an OOP-based Application",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn python coding"
+      },
+      {
+        "id": 4,
+        "name": "*Implement File Handling and Exception Handling in a Project",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn python coding"
+      },
+      {
+        "id": 5,
+        "name": "*Complete a Complex Python Project",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn python coding"
+      }
+    ],
+    "created_at": "2025-09-14 15:17:43"
+  },
+  {
+    "id": 4,
+    "name": "Learn to cook Biryani",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-09-21",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "*Recipe Selection and Ingredient Procurement",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to cook Biryani"
+      },
+      {
+        "id": 2,
+        "name": "*Main Ingredient Preparation",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to cook Biryani"
+      },
+      {
+        "id": 3,
+        "name": "*Biryani Cooking and Layering",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to cook Biryani"
+      },
+      {
+        "id": 4,
+        "name": "*First Biryani Attempt and Evaluation",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to cook Biryani"
+      },
+      {
+        "id": 5,
+        "name": "*Recipe Refinement and Documentation",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "description": "AI-generated milestone for Learn to cook Biryani"
+      }
+    ],
+    "created_at": "2025-09-14 15:18:47"
+  }
+]
