@@ -29,26 +29,63 @@ st.markdown("""
     .task-card {
         background: white;
         padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         margin: 1rem 0;
-        border-left: 4px solid #667eea;
+        border-left: 5px solid #667eea;
+        transition: transform 0.2s ease;
+    }
+    .task-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
     }
     .milestone-item {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        margin: 0.5rem 0;
-        border-left: 3px solid #28a745;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 1.2rem;
+        border-radius: 10px;
+        margin: 0.8rem 0;
+        border-left: 4px solid #28a745;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    .completed {
+    .milestone-item.completed {
         border-left-color: #28a745;
-        background: #d4edda;
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
     }
-    .in-progress {
+    .milestone-item.in-progress {
         border-left-color: #ffc107;
-        background: #fff3cd;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
     }
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .stats-label {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+    .category-badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin: 0.2rem;
+    }
+    .category-personal { background: #e3f2fd; color: #1976d2; }
+    .category-work { background: #f3e5f5; color: #7b1fa2; }
+    .category-health { background: #e8f5e8; color: #388e3c; }
+    .category-learning { background: #fff3e0; color: #f57c00; }
+    .category-finance { background: #fce4ec; color: #c2185b; }
+    .category-other { background: #f5f5f5; color: #616161; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -100,30 +137,53 @@ if page == "Dashboard":
     pending_tasks = total_tasks - completed_tasks - in_progress_tasks
     
     with col1:
-        st.metric("Total Tasks", total_tasks)
+        st.markdown(f"""
+        <div class="stats-card">
+            <div class="stats-number">{total_tasks}</div>
+            <div class="stats-label">Total Tasks</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col2:
-        st.metric("Completed", completed_tasks)
+        st.markdown(f"""
+        <div class="stats-card">
+            <div class="stats-number">{completed_tasks}</div>
+            <div class="stats-label">Completed</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col3:
-        st.metric("In Progress", in_progress_tasks)
+        st.markdown(f"""
+        <div class="stats-card">
+            <div class="stats-number">{in_progress_tasks}</div>
+            <div class="stats-label">In Progress</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col4:
-        st.metric("Pending", pending_tasks)
+        st.markdown(f"""
+        <div class="stats-card">
+            <div class="stats-number">{pending_tasks}</div>
+            <div class="stats-label">Pending</div>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Recent tasks
     st.subheader("📋 Recent Tasks")
     if st.session_state.tasks:
         recent_tasks = st.session_state.tasks[-5:]  # Last 5 tasks
         for task in reversed(recent_tasks):
+            category_class = f"category-{task['category'].lower()}"
+            status_emoji = {"completed": "✅", "in_progress": "🔄", "pending": "⏳"}.get(task.get('status', 'pending'), "⏳")
+            
             with st.container():
                 st.markdown(f"""
                 <div class="task-card">
                     <h4>{task['name']}</h4>
-                    <p><strong>Category:</strong> {task['category']}</p>
-                    <p><strong>Status:</strong> {task.get('status', 'pending').title()}</p>
+                    <p><span class="category-badge {category_class}">{task['category']}</span></p>
+                    <p><strong>Status:</strong> {status_emoji} {task.get('status', 'pending').title()}</p>
                     <p><strong>Due:</strong> {task['end_date']}</p>
                 </div>
                 """, unsafe_allow_html=True)
     else:
-        st.info("No tasks yet. Create your first task!")
+        st.info("🎯 No tasks yet. Create your first task to get started!")
 
 # Create Task Page
 elif page == "Create Task":
@@ -172,13 +232,24 @@ elif page == "Create Task":
                     st.success(f"✅ Task '{task_name}' created successfully with {len(milestones)} AI-generated milestones!")
                     
                     # Show generated milestones
-                    st.subheader("🎯 Generated Milestones")
-                    for milestone in milestones:
+                    st.subheader("🎯 AI-Generated Milestones")
+                    
+                    # Calculate total estimated days
+                    total_estimated = sum(milestone.get('estimated_days', 1) for milestone in milestones)
+                    duration_days = (end_date - start_date).days
+                    
+                    st.info(f"📅 **Total Task Duration:** {duration_days} days | **Estimated Milestone Time:** {total_estimated} days")
+                    
+                    for i, milestone in enumerate(milestones, 1):
+                        priority_emoji = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}.get(milestone['priority'], "🟡")
+                        estimated_days = milestone.get('estimated_days', 1)
+                        time_emoji = "⏰" if estimated_days <= 1 else "📅"
+                        
                         st.markdown(f"""
                         <div class="milestone-item">
-                            <strong>{milestone['name']}</strong><br>
-                            Priority: {milestone['priority']}<br>
-                            {milestone['description']}
+                            <h5>📌 {milestone['name']}</h5>
+                            <p><strong>Priority:</strong> {priority_emoji} {milestone['priority']} | <strong>Time:</strong> {time_emoji} {estimated_days} day{'s' if estimated_days > 1 else ''}</p>
+                            <p><em>{milestone['description']}</em></p>
                         </div>
                         """, unsafe_allow_html=True)
                 else:
@@ -208,15 +279,30 @@ elif page == "My Tasks":
                 
                 # Show milestones
                 if 'milestones' in task:
-                    st.subheader("Milestones")
+                    st.subheader("🎯 Milestones")
                     for milestone in task['milestones']:
                         milestone_status = "✅ Completed" if milestone.get('completed', False) else "⏳ Pending"
-                        st.write(f"• {milestone['name']} - {milestone_status}")
+                        milestone_class = "completed" if milestone.get('completed', False) else ""
+                        priority_emoji = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}.get(milestone['priority'], "🟡")
                         
-                        if st.button(f"Toggle Milestone", key=f"milestone_{task['id']}_{milestone['id']}"):
-                            milestone['completed'] = not milestone.get('completed', False)
-                            save_tasks()
-                            st.rerun()
+                        col_milestone, col_button = st.columns([4, 1])
+                        
+                        with col_milestone:
+                            estimated_days = milestone.get('estimated_days', 1)
+                            time_emoji = "⏰" if estimated_days <= 1 else "📅"
+                            
+                            st.markdown(f"""
+                            <div class="milestone-item {milestone_class}">
+                                <h6>📌 {milestone['name']}</h6>
+                                <p><strong>Priority:</strong> {priority_emoji} {milestone['priority']} | <strong>Time:</strong> {time_emoji} {estimated_days} day{'s' if estimated_days > 1 else ''} | <strong>Status:</strong> {milestone_status}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+                        
+                        with col_button:
+                            if st.button("Toggle", key=f"milestone_{task['id']}_{milestone['id']}", type="secondary"):
+                                milestone['completed'] = not milestone.get('completed', False)
+                                save_tasks()
+                                st.rerun()
     else:
         st.info("No tasks created yet. Go to 'Create Task' to get started!")
 
@@ -230,7 +316,33 @@ elif page == "Analytics":
         total = len(st.session_state.tasks)
         completion_rate = (completed / total * 100) if total > 0 else 0
         
-        st.metric("Task Completion Rate", f"{completion_rate:.1f}%")
+        # Time allocation analysis
+        total_estimated_days = 0
+        total_actual_days = 0
+        
+        for task in st.session_state.tasks:
+            if 'milestones' in task:
+                for milestone in task['milestones']:
+                    total_estimated_days += milestone.get('estimated_days', 1)
+            
+            # Calculate actual task duration
+            try:
+                start_date = datetime.strptime(task['start_date'], '%Y-%m-%d')
+                end_date = datetime.strptime(task['end_date'], '%Y-%m-%d')
+                total_actual_days += (end_date - start_date).days
+            except:
+                pass
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.metric("Task Completion Rate", f"{completion_rate:.1f}%")
+        
+        with col2:
+            st.metric("Total Estimated Days", f"{total_estimated_days}")
+        
+        with col3:
+            st.metric("Total Actual Days", f"{total_actual_days}")
         
         # Category breakdown
         categories = {}

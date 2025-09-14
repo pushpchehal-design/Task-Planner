@@ -18,76 +18,75 @@ class AITaskPlanner:
             self.model = None
             return
         
-        # Show API key status
-        masked_key = f"{self.api_key[:4]}...{self.api_key[-4:]}" if len(self.api_key) > 8 else "***"
-        st.sidebar.info(f"🔑 API Key: {masked_key}")
-        
         # Configure the API
         try:
             genai.configure(api_key=self.api_key)
             self.model = genai.GenerativeModel('gemini-1.5-flash')
-            st.sidebar.success("✅ AI Service initialized successfully")
+            st.sidebar.success("✅ AI Service Ready")
         except Exception as e:
-            st.sidebar.error(f"❌ Failed to initialize AI service: {str(e)}")
+            st.sidebar.error(f"❌ AI Service Error: {str(e)}")
             self.model = None
     
     def generate_milestones(self, task_name: str, category: str, start_date: datetime, end_date: datetime, additional_context: str = ""):
         """Generate AI-powered milestones for a task"""
         
         if not self.model:
-            st.sidebar.warning("⚠️ AI model not available, using fallback milestones")
             return self._get_fallback_milestones(task_name, category)
         
         try:
             # Calculate task duration
             duration_days = (end_date - start_date).days
             
-            st.sidebar.info(f"🤖 Generating AI milestones for: {task_name}")
-            
             # Create the prompt
             prompt = f"""
-            Create a detailed task breakdown for: "{task_name}"
+            Break down this task into 3-5 specific, actionable steps: "{task_name}"
             
-            Category: {category}
-            Duration: {duration_days} days
-            Start Date: {start_date.strftime('%Y-%m-%d')}
-            End Date: {end_date.strftime('%Y-%m-%d')}
+            Task Details:
+            - Category: {category}
+            - Total time available: {duration_days} days
+            - Additional context: {additional_context}
             
-            Additional Context: {additional_context}
+            Create specific action steps that someone would actually do to complete this task. Each step should be a concrete action, not a category or date.
             
-            Please provide exactly 3-5 specific, actionable milestones. Format each milestone as:
+            Format your response as a simple numbered list:
             
-            1. [Milestone Name]
-            2. [Milestone Name]
-            3. [Milestone Name]
-            4. [Milestone Name]
-            5. [Milestone Name]
+            1. [Specific action step] - [X days]
+            2. [Specific action step] - [X days]
+            3. [Specific action step] - [X days]
+            4. [Specific action step] - [X days]
+            5. [Specific action step] - [X days]
             
-            Each milestone should be a clear, specific action step for completing "{task_name}".
-            Make the milestone names descriptive and actionable.
+            Examples of GOOD milestones:
+            - "Research and gather materials" - 2 days
+            - "Practice basic skills" - 3 days
+            - "Complete hands-on training" - 4 days
+            - "Take final assessment" - 1 day
+            
+            Examples of BAD milestones (DO NOT USE):
+            - "Category" - 1 day
+            - "Start Date" - 1 day
+            - "Total Duration" - 1 day
+            
+            Make sure the total days add up to {duration_days} days.
             """
             
             # Generate response
             response = self.model.generate_content(prompt)
             
             if response.text:
-                st.sidebar.success("✅ AI milestones generated successfully!")
+                # Debug: Show raw response in sidebar
+                st.sidebar.text_area("AI Response:", response.text, height=150)
                 return self._parse_ai_response(response.text, task_name)
             else:
-                st.sidebar.warning("⚠️ Empty AI response, using fallback")
                 return self._get_fallback_milestones(task_name, category)
                 
         except Exception as e:
-            st.sidebar.error(f"❌ AI generation failed: {str(e)}")
             return self._get_fallback_milestones(task_name, category)
     
     def _parse_ai_response(self, response_text: str, task_name: str):
-        """Parse AI response into milestone format"""
+        """Parse AI response into milestone format with time allocation"""
         milestones = []
         lines = response_text.strip().split('\n')
-        
-        # Debug: Show the raw AI response
-        st.sidebar.text_area("Raw AI Response:", response_text, height=100)
         
         milestone_id = 1
         for line in lines:
@@ -98,10 +97,24 @@ class AITaskPlanner:
             
             # Clean up the line
             milestone_name = line
+            estimated_days = 1  # Default to 1 day
+            
             # Remove common prefixes
             for prefix in ['1.', '2.', '3.', '4.', '5.', '-', '•', '*']:
                 if milestone_name.startswith(prefix):
                     milestone_name = milestone_name[len(prefix):].strip()
+            
+            # Extract time allocation if present (e.g., "Task Name - 3 days")
+            if ' - ' in milestone_name:
+                parts = milestone_name.split(' - ')
+                milestone_name = parts[0].strip()
+                time_part = parts[1].strip() if len(parts) > 1 else "1 day"
+                
+                # Extract number from time part
+                import re
+                time_match = re.search(r'(\d+)', time_part)
+                if time_match:
+                    estimated_days = int(time_match.group(1))
             
             # Extract name if there's a colon
             if ':' in milestone_name:
@@ -111,19 +124,28 @@ class AITaskPlanner:
             if len(milestone_name) < 3:
                 continue
             
+            # Filter out bad milestone names (metadata fields)
+            bad_names = ['category', 'total duration', 'start date', 'end date', 'additional context', 'task details', 'requirements', 'examples']
+            if milestone_name.lower().strip() in bad_names:
+                continue
+            
+            # Skip if it contains metadata keywords
+            if any(keyword in milestone_name.lower() for keyword in ['category:', 'duration:', 'date:', 'context:', 'details:']):
+                continue
+            
             milestones.append({
                 'id': milestone_id,
                 'name': milestone_name,
                 'priority': 'Medium',
                 'progress': 0,
                 'completed': False,
-                'description': f"AI-generated milestone for {task_name}"
+                'estimated_days': estimated_days,
+                'description': f"AI-generated milestone for {task_name} (Estimated: {estimated_days} day{'s' if estimated_days > 1 else ''})"
             })
             milestone_id += 1
         
         # If we didn't get any milestones, use fallback
         if len(milestones) == 0:
-            st.sidebar.warning("⚠️ Could not parse AI response, using fallback milestones")
             return self._get_fallback_milestones(task_name, "General")
         
         # Ensure we have at least 3 milestones
@@ -142,7 +164,8 @@ class AITaskPlanner:
                 'priority': 'High',
                 'progress': 0,
                 'completed': False,
-                'description': f'Initial research and planning phase for {task_name}'
+                'estimated_days': 2,
+                'description': f'Initial research and planning phase for {task_name} (Estimated: 2 days)'
             },
             {
                 'id': 2,
@@ -150,7 +173,8 @@ class AITaskPlanner:
                 'priority': 'High',
                 'progress': 0,
                 'completed': False,
-                'description': f'Main implementation work for {task_name}'
+                'estimated_days': 5,
+                'description': f'Main implementation work for {task_name} (Estimated: 5 days)'
             },
             {
                 'id': 3,
@@ -158,6 +182,7 @@ class AITaskPlanner:
                 'priority': 'Medium',
                 'progress': 0,
                 'completed': False,
-                'description': f'Final review and completion of {task_name}'
+                'estimated_days': 3,
+                'description': f'Final review and completion of {task_name} (Estimated: 3 days)'
             }
         ]

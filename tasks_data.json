@@ -202,5 +202,117 @@
       }
     ],
     "created_at": "2025-09-14 15:18:47"
+  },
+  {
+    "id": 5,
+    "name": "Learn how to drive",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-11-30",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "Category",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn how to drive (Estimated: 1 day)"
+      },
+      {
+        "id": 2,
+        "name": "Total Duration",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn how to drive (Estimated: 1 day)"
+      },
+      {
+        "id": 3,
+        "name": "Start Date",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn how to drive (Estimated: 1 day)"
+      },
+      {
+        "id": 4,
+        "name": "End Date",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn how to drive (Estimated: 1 day)"
+      },
+      {
+        "id": 5,
+        "name": "*Complete Driver's Education Course and Obtain Learner's Permit**",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 21,
+        "description": "AI-generated milestone for Learn how to drive (Estimated: 21 days)"
+      }
+    ],
+    "created_at": "2025-09-14 15:30:44"
+  },
+  {
+    "id": 6,
+    "name": "Learn how to drive a car",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-12-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "Research driving schools and obtain a learner's permit.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 7,
+        "description": "AI-generated milestone for Learn how to drive a car (Estimated: 7 days)"
+      },
+      {
+        "id": 2,
+        "name": "Complete a comprehensive driver's education course, including classroom and behind-the-wheel instruction.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 42,
+        "description": "AI-generated milestone for Learn how to drive a car (Estimated: 42 days)"
+      },
+      {
+        "id": 3,
+        "name": "Practice driving regularly with a licensed driver, focusing on different road conditions and maneuvers (city driving, highway driving, parking, etc.).",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 49,
+        "description": "AI-generated milestone for Learn how to drive a car (Estimated: 49 days)"
+      },
+      {
+        "id": 4,
+        "name": "Schedule and pass the driving test.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 5,
+        "description": "AI-generated milestone for Learn how to drive a car (Estimated: 5 days)"
+      },
+      {
+        "id": 5,
+        "name": "Obtain a driver's license and continue practicing to build confidence and experience.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 5,
+        "description": "AI-generated milestone for Learn how to drive a car (Estimated: 5 days)"
+      }
+    ],
+    "created_at": "2025-09-14 15:34:53"
   }
 ]
