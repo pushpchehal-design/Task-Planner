@@ -121,8 +121,30 @@ ai_service = get_ai_service()
 st.markdown('<h1 class="main-header">🤖 AI Task Planner</h1>', unsafe_allow_html=True)
 
 # Sidebar navigation
-st.sidebar.title("Navigation")
+st.sidebar.markdown("## 🧭 Navigation")
 page = st.sidebar.selectbox("Choose a page", ["Dashboard", "Create Task", "My Tasks", "Analytics"])
+
+# Add some spacing
+st.sidebar.markdown("---")
+
+# Quick stats in sidebar
+if st.session_state.tasks:
+    st.sidebar.markdown("### 📊 Quick Stats")
+    total_tasks = len(st.session_state.tasks)
+    completed_tasks = len([t for t in st.session_state.tasks if t.get('status') == 'completed'])
+    
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        st.metric("Total", total_tasks)
+    with col2:
+        st.metric("Done", completed_tasks)
+    
+    if total_tasks > 0:
+        completion_rate = (completed_tasks / total_tasks * 100)
+        st.sidebar.progress(completion_rate / 100)
+        st.sidebar.caption(f"{completion_rate:.1f}% Complete")
+    
+    st.sidebar.markdown("---")
 
 # Dashboard Page
 if page == "Dashboard":
@@ -249,7 +271,6 @@ elif page == "Create Task":
                         <div class="milestone-item">
                             <h5>📌 {milestone['name']}</h5>
                             <p><strong>Priority:</strong> {priority_emoji} {milestone['priority']} | <strong>Time:</strong> {time_emoji} {estimated_days} day{'s' if estimated_days > 1 else ''}</p>
-                            <p><em>{milestone['description']}</em></p>
                         </div>
                         """, unsafe_allow_html=True)
                 else:

@@ -314,5 +314,426 @@
       }
     ],
     "created_at": "2025-09-14 15:34:53"
+  },
+  {
+    "id": 7,
+    "name": "Learn art of negotiations ",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-10-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "*Research fundamental negotiation principles and strategies",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn art of negotiations  (Estimated: 1 day)"
+      },
+      {
+        "id": 2,
+        "name": "*Practice with simulated negotiations",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn art of negotiations  (Estimated: 1 day)"
+      },
+      {
+        "id": 3,
+        "name": "*Study real-world case studies",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn art of negotiations  (Estimated: 1 day)"
+      },
+      {
+        "id": 4,
+        "name": "*Seek feedback and refine techniques",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn art of negotiations  (Estimated: 1 day)"
+      },
+      {
+        "id": 5,
+        "name": "*Apply learned skills in real-life scenarios",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn art of negotiations  (Estimated: 1 day)"
+      }
+    ],
+    "created_at": "2025-09-14 15:42:08"
+  },
+  {
+    "id": 8,
+    "name": "Learn the art of story telling",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-10-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "**Practice active listening and observation",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn the art of story telling (Estimated: 1 day)"
+      },
+      {
+        "id": 2,
+        "name": "**Craft and refine your own short stories",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn the art of story telling (Estimated: 1 day)"
+      },
+      {
+        "id": 3,
+        "name": "**Learn storytelling techniques and theory",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn the art of story telling (Estimated: 1 day)"
+      },
+      {
+        "id": 4,
+        "name": "**Develop your personal storytelling style",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 44,
+        "description": "AI-generated milestone for Learn the art of story telling (Estimated: 44 days)"
+      }
+    ],
+    "created_at": "2025-09-14 15:53:21"
+  },
+  {
+    "id": 9,
+    "name": "Learn the art of story telling",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-09-21",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "Practice crafting short stories (aim for one per day), focusing on a single element each day (e.g., Day 3",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 2,
+        "description": "AI-generated milestone for Learn the art of story telling (Estimated: 2 days)"
+      },
+      {
+        "id": 2,
+        "name": "Seek feedback on your stories from trusted friends or online writing communities, focusing on areas for improvement. \u2013 1 day",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn the art of story telling (Estimated: 1 day)"
+      },
+      {
+        "id": 3,
+        "name": "Learn about different storytelling techniques from online courses, books, or articles (e.g.,  show, don't tell; creating suspense; using dialogue effectively). \u2013 1 day",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn the art of story telling (Estimated: 1 day)"
+      },
+      {
+        "id": 4,
+        "name": "Develop a personal storytelling framework based on your learnings and practice, and create a longer-form story outline \u2013 1 day",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 3,
+        "description": "AI-generated milestone for Learn the art of story telling (Estimated: 3 days)"
+      }
+    ],
+    "created_at": "2025-09-14 15:57:53"
+  },
+  {
+    "id": 10,
+    "name": "Learn Public speaking",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-10-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "Master foundational public speaking techniques",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 15,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 15 days)"
+      },
+      {
+        "id": 2,
+        "name": "Immerse in public speaking environments",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 10,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 10 days)"
+      },
+      {
+        "id": 3,
+        "name": "Develop advanced skills and refine delivery",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 5,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 5 days)"
+      },
+      {
+        "id": 4,
+        "name": "Refine and perfect a flagship speech",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 17,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 17 days)"
+      }
+    ],
+    "created_at": "2025-09-14 16:04:24"
+  },
+  {
+    "id": 11,
+    "name": "Learn Public speaking",
+    "category": "Personal",
+    "start_date": "2025-10-01",
+    "end_date": "2025-10-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "Identify your speaking goals and target audience, research public speaking techniques (books, videos, articles).  Practice basic vocal exercises and breathing techniques.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 7,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 7 days)"
+      },
+      {
+        "id": 2,
+        "name": "Develop a 5-minute speech on a topic you're passionate about. Practice delivering this speech in front of a mirror, recording yourself, and analyzing your performance. Refine your speech based on self-assessment.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 10,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 10 days)"
+      },
+      {
+        "id": 3,
+        "name": "Practice your 5-minute speech in front of small, trusted audiences (friends, family). Seek constructive criticism and incorporate feedback into your delivery and speech content. Experiment with different presentation styles.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 7,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 7 days)"
+      },
+      {
+        "id": 4,
+        "name": "Create a longer (10-15 minute) speech on a different topic.  Practice this speech using the same methods as step 2, focusing on advanced techniques like storytelling, audience engagement, and handling Q&A.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 5,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 5 days)"
+      },
+      {
+        "id": 5,
+        "name": "Record and review your final speech.  Identify areas for further improvement.  Consider joining a local Toastmasters club or similar group for continued practice and feedback. Plan for future speaking opportunities.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn Public speaking (Estimated: 1 day)"
+      }
+    ],
+    "created_at": "2025-09-14 16:07:35"
+  },
+  {
+    "id": 12,
+    "name": "Learn method acting",
+    "category": "Personal",
+    "start_date": "2025-10-01",
+    "end_date": "2025-12-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "Immerse yourself in foundational theory",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 30,
+        "description": "AI-generated milestone for Learn method acting (Estimated: 30 days)"
+      },
+      {
+        "id": 2,
+        "name": "Practice fundamental exercises",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 30,
+        "description": "AI-generated milestone for Learn method acting (Estimated: 30 days)"
+      },
+      {
+        "id": 3,
+        "name": "Develop a character study and perform a monologue",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 20,
+        "description": "AI-generated milestone for Learn method acting (Estimated: 20 days)"
+      },
+      {
+        "id": 4,
+        "name": "Seek feedback and refine your performance",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 10,
+        "description": "AI-generated milestone for Learn method acting (Estimated: 10 days)"
+      },
+      {
+        "id": 5,
+        "name": "Explore advanced techniques and roles",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "AI-generated milestone for Learn method acting (Estimated: 1 day)"
+      }
+    ],
+    "created_at": "2025-09-14 16:10:47"
+  },
+  {
+    "id": 13,
+    "name": "Learn method acting like Irfan",
+    "category": "Personal",
+    "start_date": "2025-10-01",
+    "end_date": "2025-12-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "Research Irfan Khan's Method Acting Techniques",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 21,
+        "description": "1. **Research Irfan Khan's Method Acting Techniques** - 21 days"
+      },
+      {
+        "id": 2,
+        "name": "Study and Practice Foundational Method Acting Exercises",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 30,
+        "description": "2. **Study and Practice Foundational Method Acting Exercises** - 30 days"
+      },
+      {
+        "id": 3,
+        "name": "   Dedicate time to practicing fundamental method acting exercises such as sense memory, emotional recall, physicalization, and improvisation.  Utilize resources like acting books, online tutorials, and potentially workshops (if accessible within the timeframe). Focus on building a strong foundation in these techniques.  Regularly record and review your practice sessions for self-assessment.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "*   Dedicate time to practicing fundamental method acting exercises such as sense memory, emotional recall, physicalization, and improvisation.  Utilize resources like acting books, online tutorials, and potentially workshops (if accessible within the timeframe). Focus on building a strong foundation in these techniques.  Regularly record and review your practice sessions for self-assessment."
+      },
+      {
+        "id": 4,
+        "name": "Character Development and Application",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 20,
+        "description": "3. **Character Development and Application** - 20 days"
+      },
+      {
+        "id": 5,
+        "name": "   Select several diverse characters from Irfan Khan's filmography or from other sources.  Develop in-depth character analyses, creating detailed backstories, motivations, and objectives for each.  Apply the method acting techniques learned in Step 2 to embody these characters, focusing on physicality, voice, and emotional depth.  Practice scenes and monologues as each character.",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 1,
+        "description": "*   Select several diverse characters from Irfan Khan's filmography or from other sources.  Develop in-depth character analyses, creating detailed backstories, motivations, and objectives for each.  Apply the method acting techniques learned in Step 2 to embody these characters, focusing on physicality, voice, and emotional depth.  Practice scenes and monologues as each character."
+      }
+    ],
+    "created_at": "2025-09-14 16:15:58"
+  },
+  {
+    "id": 14,
+    "name": "Prepare for a marathon",
+    "category": "Personal",
+    "start_date": "2025-09-14",
+    "end_date": "2025-12-31",
+    "status": "pending",
+    "milestones": [
+      {
+        "id": 1,
+        "name": "Build a Base Running Program (45 days)",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 45,
+        "description": "1. **Build a Base Running Program (45 days):**  Begin with a consistent running schedule focusing on building endurance. This involves gradually increasing weekly mileage and incorporating easy runs, interval training, and rest days.  Start with shorter distances and gradually increase the duration and intensity of your runs.  Include cross-training activities like swimming or cycling 1-2 times per week to prevent injury and improve overall fitness."
+      },
+      {
+        "id": 2,
+        "name": "Increase Mileage and Incorporate Long Runs (45 days)",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 45,
+        "description": "2. **Increase Mileage and Incorporate Long Runs (45 days):**  Focus on steadily increasing your long run distance each week.  This is crucial for building endurance and getting your body accustomed to the demands of a marathon.  Include hill training to strengthen leg muscles and improve stamina.  Maintain a consistent weekly mileage plan, adjusting based on how your body feels.  Listen to your body and don't push yourself too hard, especially in the early stages."
+      },
+      {
+        "id": 3,
+        "name": "Implement Race Strategy and Tapering (12 days)",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 12,
+        "description": "3. **Implement Race Strategy and Tapering (12 days):**  Develop your race-day strategy, including pacing, hydration, and nutrition plans.  Begin your tapering process, gradually decreasing your weekly mileage in the weeks leading up to the marathon.  This allows your body to recover and store energy for the race. This phase will also include practice runs with your race-day nutrition and hydration plan."
+      },
+      {
+        "id": 4,
+        "name": "Race Day Preparation and Recovery (4 days)",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 4,
+        "description": "4. **Race Day Preparation and Recovery (4 days):**  The final days before the marathon involve carb-loading, final gear checks, and mental preparation.  After the marathon, focus on gradual recovery, including light exercise, stretching, and proper nutrition to help your body repair itself. Include plenty of rest."
+      },
+      {
+        "id": 5,
+        "name": "Injury Prevention and Strength Training (2 days)",
+        "priority": "Medium",
+        "progress": 0,
+        "completed": false,
+        "estimated_days": 2,
+        "description": "5. **Injury Prevention and Strength Training (2 days):** Dedicate these two days to strength training and flexibility exercises, focusing on strengthening core muscles and improving flexibility to prevent injuries during your training.  Consider consulting a physical therapist or athletic trainer for guidance on proper techniques.  These days are spread throughout the entire 108 days."
+      }
+    ],
+    "created_at": "2025-09-14 16:20:20"
   }
 ]
