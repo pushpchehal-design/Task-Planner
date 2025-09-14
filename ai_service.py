@@ -25,16 +25,28 @@ class AITaskPlanner:
             # Show first and last 4 characters for debugging (masked)
             masked_key = f"{self.api_key[:4]}...{self.api_key[-4:]}" if len(self.api_key) > 8 else "***"
             st.sidebar.info(f"API Key found: {masked_key}")
+            st.sidebar.info(f"Key length: {len(self.api_key)}")
+            st.sidebar.info(f"Key source: {'Environment' if os.getenv('GEMINI_API_KEY') else 'Streamlit Secrets'}")
         else:
             st.sidebar.error("❌ No API key found!")
+            st.sidebar.error(f"Env var exists: {bool(os.getenv('GEMINI_API_KEY'))}")
+            try:
+                st.sidebar.error(f"Secrets exist: {bool(st.secrets.get('GEMINI_API_KEY'))}")
+            except:
+                st.sidebar.error("Secrets: Not accessible")
         
         if self.api_key:
+            st.sidebar.info("🔧 Configuring Gemini API...")
             genai.configure(api_key=self.api_key)
+            st.sidebar.info("✅ API configured successfully")
+            
             # List available models for debugging
             try:
+                st.sidebar.info("🔍 Listing available models...")
                 models = genai.list_models()
                 available_models = [m.name for m in models if 'generateContent' in m.supported_generation_methods]
-                st.sidebar.info(f"Available models: {available_models}")
+                st.sidebar.info(f"✅ Found {len(available_models)} models")
+                st.sidebar.info(f"Available models: {available_models[:3]}...")  # Show first 3
                 
                 # Try different model names - prioritize working models
                 model_name = None
