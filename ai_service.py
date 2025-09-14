@@ -17,6 +17,14 @@ class AITaskPlanner:
         if not self.api_key:
             self.api_key = os.getenv('GEMINI_API_KEY')
         
+        # Debug API key status
+        if self.api_key:
+            # Show first and last 4 characters for debugging (masked)
+            masked_key = f"{self.api_key[:4]}...{self.api_key[-4:]}" if len(self.api_key) > 8 else "***"
+            st.sidebar.info(f"API Key found: {masked_key}")
+        else:
+            st.sidebar.error("❌ No API key found!")
+        
         if self.api_key:
             genai.configure(api_key=self.api_key)
             # List available models for debugging
@@ -28,14 +36,17 @@ class AITaskPlanner:
                 # Try different model names - prioritize working models
                 model_name = None
                 
-                # Try different model variations
+                # Try different model variations - prioritize flash models (higher free tier limits)
                 model_candidates = [
-                    'models/gemini-1.5-flash',
-                    'models/gemini-1.5-pro', 
-                    'models/gemini-1.0-pro',
+                    'models/gemini-1.5-flash',      # Higher free tier limits
+                    'models/gemini-1.5-flash-latest', # Latest flash model
+                    'models/gemini-1.0-pro',        # Legacy model with different quotas
                     'gemini-1.5-flash',
-                    'gemini-1.5-pro',
-                    'gemini-1.0-pro'
+                    'gemini-1.5-flash-latest',
+                    'gemini-1.0-pro',
+                    'models/gemini-1.5-pro',        # Lower priority due to quota limits
+                    'models/gemini-1.5-pro-latest',
+                    'gemini-1.5-pro'
                 ]
                 
                 for candidate in model_candidates:
@@ -53,9 +64,14 @@ class AITaskPlanner:
                 st.sidebar.success(f"Using model: {model_name}")
                 
             except Exception as e:
-                st.sidebar.error(f"Error listing models: {str(e)}")
+                error_msg = str(e)
+                if "quota" in error_msg.lower() or "429" in error_msg:
+                    st.sidebar.warning("⚠️ API quota exceeded. Using fallback milestones.")
+                    st.sidebar.info("💡 Try again later or upgrade your API plan")
+                else:
+                    st.sidebar.error(f"Error listing models: {error_msg}")
                 # Fallback to default
-                self.model = genai.GenerativeModel('gemini-1.5-flash')
+                self.model = genai.GenerativeModel('models/gemini-1.5-flash')
         else:
             self.model = None
             st.warning("⚠️ Gemini API key not found. Please set GEMINI_API_KEY in your environment variables or Streamlit secrets.")
@@ -94,7 +110,12 @@ class AITaskPlanner:
             return milestones
             
         except Exception as e:
-            st.error(f"Error generating AI milestones: {str(e)}")
+            error_msg = str(e)
+            if "quota" in error_msg.lower() or "429" in error_msg:
+                st.warning("⚠️ API quota exceeded. Using intelligent fallback milestones.")
+                st.info("💡 Your API key is valid but you've hit the free tier limit. Try again later or upgrade your plan.")
+            else:
+                st.error(f"Error generating AI milestones: {error_msg}")
             return self._fallback_milestones(task_name, category, start_date, end_date)
     
     def _create_milestone_prompt(self, task_name: str, category: str, duration_days: int, 
