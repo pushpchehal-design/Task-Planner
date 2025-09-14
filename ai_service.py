@@ -18,7 +18,7 @@ class AITaskPlanner:
         
         if self.api_key:
             genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel('gemini-pro')
+            self.model = genai.GenerativeModel('gemini-1.5-flash')
         else:
             self.model = None
             st.warning("⚠️ Gemini API key not found. Please set GEMINI_API_KEY in your environment variables or Streamlit secrets.")
