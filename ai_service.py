@@ -12,9 +12,10 @@ load_dotenv()
 class AITaskPlanner:
     def __init__(self):
         """Initialize the AI service with Gemini API"""
-        self.api_key = os.getenv('GEMINI_API_KEY')
+        # Try Streamlit secrets first (for deployment), then environment variables
+        self.api_key = st.secrets.get('GEMINI_API_KEY')
         if not self.api_key:
-            self.api_key = st.secrets.get('GEMINI_API_KEY')
+            self.api_key = os.getenv('GEMINI_API_KEY')
         
         if self.api_key:
             genai.configure(api_key=self.api_key)
