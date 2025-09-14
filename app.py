@@ -138,12 +138,8 @@ def save_tasks():
 # Load tasks on startup
 load_tasks()
 
-# Initialize AI service
-@st.cache_resource
-def get_ai_service():
-    return AITaskPlanner()
-
-ai_service = get_ai_service()
+# Initialize AI service (no caching to ensure updates are deployed)
+ai_service = AITaskPlanner()
 
 # Main header
 st.markdown('<h1 class="main-header">🤖 AI Task Planner</h1>', unsafe_allow_html=True)

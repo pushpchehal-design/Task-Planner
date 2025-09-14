@@ -31,6 +31,7 @@ class AITaskPlanner:
         """Generate AI-powered milestones for a task"""
         
         if not self.model:
+            st.sidebar.warning("⚠️ AI model not available, using fallback milestones")
             return self._get_fallback_milestones(task_name, category)
         
         try:
@@ -98,8 +99,17 @@ class AITaskPlanner:
                 # Show AI response in sidebar for reference
                 st.sidebar.markdown("### 🤖 AI Response")
                 st.sidebar.text_area("AI Generated Content:", response.text, height=200, key="ai_response", label_visibility="collapsed")
-                return self._parse_ai_response(response.text, task_name, duration_days)
+                
+                # Parse the response
+                milestones = self._parse_ai_response(response.text, task_name, duration_days)
+                
+                # Debug: Show total allocated time
+                total_allocated = sum(m.get('estimated_days', 1) for m in milestones)
+                st.sidebar.info(f"📊 Total Allocated: {total_allocated} days (Expected: {duration_days} days)")
+                
+                return milestones
             else:
+                st.sidebar.warning("⚠️ No AI response received, using fallback")
                 return self._get_fallback_milestones(task_name, category, duration_days)
                 
         except Exception as e:
@@ -172,6 +182,7 @@ class AITaskPlanner:
         
         # If we didn't get any milestones, use fallback
         if len(milestones) == 0:
+            st.sidebar.warning("⚠️ No milestones parsed from AI response, using fallback")
             return self._get_fallback_milestones(task_name, "General", expected_total_days)
         
         # Validate total time allocation
@@ -180,8 +191,10 @@ class AITaskPlanner:
         # If total doesn't match expected, adjust the last milestone
         if total_allocated != expected_total_days and len(milestones) > 0:
             difference = expected_total_days - total_allocated
+            old_days = milestones[-1]['estimated_days']
             milestones[-1]['estimated_days'] = max(1, milestones[-1]['estimated_days'] + difference)
             milestones[-1]['description'] = f"AI-generated milestone for {task_name} (Estimated: {milestones[-1]['estimated_days']} day{'s' if milestones[-1]['estimated_days'] > 1 else ''})"
+            st.sidebar.info(f"🔧 Adjusted last milestone: {old_days} → {milestones[-1]['estimated_days']} days (diff: {difference})")
         
         # Ensure we have at least 3 milestones
         if len(milestones) < 3:
