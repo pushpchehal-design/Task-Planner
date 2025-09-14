@@ -8,7 +8,7 @@ from ai_service import AITaskPlanner
 
 # Page configuration
 st.set_page_config(
-    page_title="AI Task Planner",
+    page_title="AI Task Planner - by Pushp Chehal",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
