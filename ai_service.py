@@ -25,18 +25,29 @@ class AITaskPlanner:
                 available_models = [m.name for m in models if 'generateContent' in m.supported_generation_methods]
                 st.sidebar.info(f"Available models: {available_models}")
                 
-                # Try different model names
-                model_name = 'gemini-1.5-flash'
-                if model_name not in available_models:
-                    # Fallback to other available models
-                    if 'models/gemini-1.5-flash' in available_models:
-                        model_name = 'models/gemini-1.5-flash'
-                    elif 'models/gemini-1.5-pro' in available_models:
-                        model_name = 'models/gemini-1.5-pro'
-                    elif 'models/gemini-1.0-pro' in available_models:
-                        model_name = 'models/gemini-1.0-pro'
-                    else:
-                        model_name = available_models[0] if available_models else 'gemini-1.5-flash'
+                # Try different model names - prioritize working models
+                model_name = None
+                
+                # Try different model variations
+                model_candidates = [
+                    'models/gemini-1.5-flash',
+                    'models/gemini-1.5-pro', 
+                    'models/gemini-1.0-pro',
+                    'gemini-1.5-flash',
+                    'gemini-1.5-pro',
+                    'gemini-1.0-pro'
+                ]
+                
+                for candidate in model_candidates:
+                    if candidate in available_models:
+                        model_name = candidate
+                        break
+                
+                # If no specific model found, use the first available
+                if not model_name and available_models:
+                    model_name = available_models[0]
+                elif not model_name:
+                    model_name = 'models/gemini-1.5-flash'  # Default fallback
                 
                 self.model = genai.GenerativeModel(model_name)
                 st.sidebar.success(f"Using model: {model_name}")

@@ -64,10 +64,9 @@ def save_data(data):
     with open('tasks_data.json', 'w') as f:
         json.dump(data, f, indent=2, default=str)
 
-# Initialize AI service
-@st.cache_resource
+# Initialize AI service - removed cache to force reload
 def get_ai_service():
-    """Get cached AI service instance"""
+    """Get AI service instance"""
     return AITaskPlanner()
 
 def calculate_efficiency_score(tasks_data: Dict) -> float:
