@@ -93,13 +93,25 @@ st.markdown("""
 if 'tasks' not in st.session_state:
     st.session_state.tasks = []
 
-# Generate a unique user ID based on session
+# Generate a persistent user ID based on browser/machine
 if 'user_id' not in st.session_state:
     import hashlib
-    import time
-    # Create a unique user ID based on session info
-    session_info = f"{st.session_state.get('session_id', '')}{time.time()}"
-    st.session_state.user_id = hashlib.md5(session_info.encode()).hexdigest()[:8]
+    import platform
+    import getpass
+    import os
+    
+    try:
+        # Create a persistent user ID based on machine info
+        machine_info = f"{platform.node()}{getpass.getuser()}{platform.system()}"
+        st.session_state.user_id = hashlib.md5(machine_info.encode()).hexdigest()[:8]
+    except:
+        # Fallback: use environment variables or create a file-based ID
+        try:
+            fallback_info = f"{os.environ.get('USER', 'user')}{os.environ.get('HOSTNAME', 'host')}"
+            st.session_state.user_id = hashlib.md5(fallback_info.encode()).hexdigest()[:8]
+        except:
+            # Last resort: use a fixed ID for this deployment
+            st.session_state.user_id = "default01"
 
 # User-specific file path
 def get_user_file_path():
@@ -144,9 +156,9 @@ page = st.sidebar.selectbox("Choose a page", ["Dashboard", "Create Task", "My Ta
 st.sidebar.markdown("---")
 
 # User indicator
-st.sidebar.markdown("### 👤 Your Session")
+st.sidebar.markdown("### 👤 Your Account")
 st.sidebar.info(f"User ID: `{st.session_state.user_id}`")
-st.sidebar.caption("Your tasks are private to this session")
+st.sidebar.caption("Your tasks are saved permanently to this machine")
 
 # Add some spacing
 st.sidebar.markdown("---")
