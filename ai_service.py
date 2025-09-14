@@ -12,10 +12,13 @@ load_dotenv()
 class AITaskPlanner:
     def __init__(self):
         """Initialize the AI service with Gemini API"""
-        # Try Streamlit secrets first (for deployment), then environment variables
-        self.api_key = st.secrets.get('GEMINI_API_KEY')
+        # Try environment variables first (for local development), then Streamlit secrets (for deployment)
+        self.api_key = os.getenv('GEMINI_API_KEY')
         if not self.api_key:
-            self.api_key = os.getenv('GEMINI_API_KEY')
+            try:
+                self.api_key = st.secrets.get('GEMINI_API_KEY')
+            except:
+                self.api_key = None
         
         # Debug API key status
         if self.api_key:
