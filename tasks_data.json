@@ -1,0 +1,77 @@
+{
+  "tasks": [
+    {
+      "id": "093b33dd-ae3b-46a6-81da-d78a4e9433a5",
+      "name": "Create a presentation for the Board of management",
+      "category": "Official",
+      "start_date": "2025-09-12",
+      "end_date": "2025-09-14",
+      "created_at": "2025-09-14 12:13:18",
+      "milestones": [
+        {
+          "name": "Planning and Research",
+          "duration": 1,
+          "description": "Complete planning and research",
+          "completed": false
+        },
+        {
+          "name": "Initial Setup",
+          "duration": 1,
+          "description": "Complete initial setup",
+          "completed": false
+        },
+        {
+          "name": "Core Development",
+          "duration": 1,
+          "description": "Complete core development",
+          "completed": false
+        }
+      ],
+      "progress": 0,
+      "status": "active"
+    },
+    {
+      "id": "f0b8eae8-fb48-4967-9485-9533f72aa965",
+      "name": "Learn to cook Sushi",
+      "category": "Personal",
+      "start_date": "2025-09-14",
+      "end_date": "2025-09-20",
+      "created_at": "2025-09-14 12:19:50",
+      "milestones": [
+        {
+          "name": "Research Learning Resources",
+          "duration": 1,
+          "description": "Find and organize learning materials",
+          "completed": false
+        },
+        {
+          "name": "Create Study Plan",
+          "duration": 1,
+          "description": "Plan study schedule and milestones",
+          "completed": false
+        },
+        {
+          "name": "Begin Learning",
+          "duration": 1,
+          "description": "Start learning and practicing",
+          "completed": false
+        },
+        {
+          "name": "Practice and Apply",
+          "duration": 1,
+          "description": "Practice skills and apply knowledge",
+          "completed": false
+        },
+        {
+          "name": "Review and Assess",
+          "duration": 1,
+          "description": "Review progress and assess learning",
+          "completed": false
+        }
+      ],
+      "progress": 0,
+      "status": "active"
+    }
+  ],
+  "completed_tasks": []
+}
