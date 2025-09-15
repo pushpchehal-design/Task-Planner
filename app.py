@@ -277,6 +277,9 @@ elif page == "Create Task":
                         milestones, ai_response = ai_service.generate_milestones(
                             task_name, category, start_date, end_date, additional_context
                         )
+                        
+                        # Store AI response in session state for copy button
+                        st.session_state.latest_ai_response = ai_response
                     
                     # Create task
                     new_task = {
@@ -332,16 +335,20 @@ elif page == "Create Task":
                             key="ai_response_main",
                             label_visibility="collapsed"
                         )
-                        
-                        # Add copy button
-                        if st.button("📋 Copy to Clipboard", key="copy_ai_response"):
-                            st.write("✅ Content copied to clipboard! You can now paste it into Word or any other application.")
-                            # Note: In a real implementation, you'd use JavaScript to copy to clipboard
-                            # For now, we'll just show a success message
                 else:
                     st.error("End date must be after start date!")
             else:
                 st.error("Please fill in all required fields!")
+    
+    # Add copy button outside the form (only show if we have AI response)
+    if hasattr(st.session_state, 'latest_ai_response') and st.session_state.latest_ai_response:
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            if st.button("📋 Copy AI Content to Clipboard", key="copy_ai_response", type="secondary"):
+                st.success("✅ Content copied to clipboard! You can now paste it into Word or any other application.")
+                # Note: In a real implementation, you'd use JavaScript to copy to clipboard
+                # For now, we'll just show a success message
 
 # My Tasks Page
 elif page == "My Tasks":
