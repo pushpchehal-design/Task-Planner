@@ -33,14 +33,40 @@ class AITaskPlanner:
         if not self.model:
             st.sidebar.warning("⚠️ AI model not available, using fallback milestones")
             fallback_milestones = self._get_fallback_milestones(task_name, category)
-            return fallback_milestones, f"Fallback milestones generated for {task_name}"
+            fallback_analysis = f"""
+📚 LEARNING RESOURCES & EXAMPLES:
+• Research online guides and tutorials for {task_name}
+• Look for case studies and success stories
+• Join relevant communities and forums
+
+🔗 USEFUL RESOURCES & REFERENCES:
+• Search for official documentation and guides
+• Find online courses or training programs
+• Connect with experts in the field
+
+💡 PRACTICAL TIPS & STRATEGIES:
+• Break down the task into smaller, manageable steps
+• Set realistic daily goals and track progress
+• Stay motivated by celebrating small wins
+
+🛠️ TOOLS & EQUIPMENT:
+• Identify any tools or software needed
+• Research budget-friendly options
+• Plan for necessary purchases or subscriptions
+
+📋 ADDITIONAL CONTEXT & NOTES:
+• Consider prerequisites and background knowledge needed
+• Plan for potential challenges and setbacks
+• Set up a support system or accountability partner
+"""
+            return fallback_milestones, fallback_analysis
         
         try:
             # Calculate task duration
             duration_days = (end_date - start_date).days
             
-            # Create the prompt
-            prompt = f"""
+            # Create the prompt for milestones
+            milestones_prompt = f"""
             Break down this task into 3-5 specific, actionable steps: "{task_name}"
             
             🚨 CRITICAL REQUIREMENT: You have exactly {duration_days} days total to complete this task. You MUST distribute ALL {duration_days} days across your milestones. DO NOT leave any days unallocated.
@@ -66,54 +92,127 @@ class AITaskPlanner:
             
             🚨 MANDATORY: The sum of all milestone days MUST equal exactly {duration_days} days. NO EXCEPTIONS.
             
-            Example for a 10-day task:
-            1. Research and planning - 2 days
-            2. Initial setup and preparation - 2 days
-            3. Main implementation work - 4 days
-            4. Testing and refinement - 1 day
-            5. Final review and completion - 1 day
-            Total: 2+2+4+1+1 = 10 days ✓
-            
-            Example for a 30-day task:
-            1. Research and planning - 5 days
-            2. Initial setup and preparation - 5 days
-            3. Main implementation work - 15 days
-            4. Testing and refinement - 3 days
-            5. Final review and completion - 2 days
-            Total: 5+5+15+3+2 = 30 days ✓
-            
-            Example for a 108-day task:
-            1. Research and planning - 20 days
-            2. Initial setup and preparation - 25 days
-            3. Main implementation work - 45 days
-            4. Testing and refinement - 12 days
-            5. Final review and completion - 6 days
-            Total: 20+25+45+12+6 = 108 days ✓
-            
             For your {duration_days}-day task, distribute the time appropriately across milestones. The total MUST equal {duration_days} days.
             """
             
-            # Generate response
-            response = self.model.generate_content(prompt)
+            # Create the prompt for enhanced detailed analysis
+            analysis_prompt = f"""
+            Provide a comprehensive, helpful analysis for this task: "{task_name}"
             
-            if response.text:
-                # Parse the response
-                milestones = self._parse_ai_response(response.text, task_name, duration_days)
+            Task Details:
+            - Category: {category}
+            - Duration: {duration_days} days
+            - Additional context: {additional_context}
+            
+            Create a detailed analysis that includes:
+            
+            📚 LEARNING RESOURCES & EXAMPLES:
+            - Recommended books, articles, or guides
+            - Real-world examples and case studies
+            - Best practices and success stories
+            
+            🔗 USEFUL RESOURCES & REFERENCES:
+            - Helpful websites and tools
+            - Online courses or tutorials
+            - Professional communities or forums
+            
+            💡 PRACTICAL TIPS & STRATEGIES:
+            - Time management techniques
+            - Productivity hacks
+            - Motivation strategies
+            - Common challenges and solutions
+            
+            🛠️ TOOLS & EQUIPMENT (if applicable):
+            - Software tools needed
+            - Physical equipment required
+            - Budget considerations
+            - Where to buy/access resources
+            
+            📋 ADDITIONAL CONTEXT & NOTES:
+            - Prerequisites and background knowledge
+            - Skill requirements
+            - Timeline considerations
+            - Legal/regulatory requirements (if applicable)
+            
+            Make this analysis practical, actionable, and valuable for someone starting this task. Focus on providing real value beyond just the basic steps.
+            """
+            
+            # Generate milestones response
+            milestones_response = self.model.generate_content(milestones_prompt)
+            
+            # Generate enhanced analysis response
+            analysis_response = self.model.generate_content(analysis_prompt)
+            
+            if milestones_response.text and analysis_response.text:
+                # Parse the milestones response
+                milestones = self._parse_ai_response(milestones_response.text, task_name, duration_days)
                 
                 # Debug: Show total allocated time
                 total_allocated = sum(m.get('estimated_days', 1) for m in milestones)
                 st.sidebar.info(f"📊 Total Allocated: {total_allocated} days (Expected: {duration_days} days)")
                 
-                # Return both milestones and the raw AI response
-                return milestones, response.text
+                # Return milestones and enhanced analysis
+                return milestones, analysis_response.text
             else:
                 st.sidebar.warning("⚠️ No AI response received, using fallback")
                 fallback_milestones = self._get_fallback_milestones(task_name, category, duration_days)
-                return fallback_milestones, f"Fallback milestones generated for {task_name}"
+                fallback_analysis = f"""
+📚 LEARNING RESOURCES & EXAMPLES:
+• Research online guides and tutorials for {task_name}
+• Look for case studies and success stories
+• Join relevant communities and forums
+
+🔗 USEFUL RESOURCES & REFERENCES:
+• Search for official documentation and guides
+• Find online courses or training programs
+• Connect with experts in the field
+
+💡 PRACTICAL TIPS & STRATEGIES:
+• Break down the task into smaller, manageable steps
+• Set realistic daily goals and track progress
+• Stay motivated by celebrating small wins
+
+🛠️ TOOLS & EQUIPMENT:
+• Identify any tools or software needed
+• Research budget-friendly options
+• Plan for necessary purchases or subscriptions
+
+📋 ADDITIONAL CONTEXT & NOTES:
+• Consider prerequisites and background knowledge needed
+• Plan for potential challenges and setbacks
+• Set up a support system or accountability partner
+"""
+                return fallback_milestones, fallback_analysis
                 
         except Exception as e:
             fallback_milestones = self._get_fallback_milestones(task_name, category)
-            return fallback_milestones, f"Fallback milestones generated for {task_name}"
+            fallback_analysis = f"""
+📚 LEARNING RESOURCES & EXAMPLES:
+• Research online guides and tutorials for {task_name}
+• Look for case studies and success stories
+• Join relevant communities and forums
+
+🔗 USEFUL RESOURCES & REFERENCES:
+• Search for official documentation and guides
+• Find online courses or training programs
+• Connect with experts in the field
+
+💡 PRACTICAL TIPS & STRATEGIES:
+• Break down the task into smaller, manageable steps
+• Set realistic daily goals and track progress
+• Stay motivated by celebrating small wins
+
+🛠️ TOOLS & EQUIPMENT:
+• Identify any tools or software needed
+• Research budget-friendly options
+• Plan for necessary purchases or subscriptions
+
+📋 ADDITIONAL CONTEXT & NOTES:
+• Consider prerequisites and background knowledge needed
+• Plan for potential challenges and setbacks
+• Set up a support system or accountability partner
+"""
+            return fallback_milestones, fallback_analysis
     
     def _parse_ai_response(self, response_text: str, task_name: str, expected_total_days: int):
         """Parse AI response into milestone format with time allocation"""
