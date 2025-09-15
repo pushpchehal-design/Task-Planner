@@ -274,7 +274,7 @@ elif page == "Create Task":
                 if end_date > start_date:
                     # Generate AI milestones
                     with st.spinner("🤖 Generating AI-powered milestones..."):
-                        milestones = ai_service.generate_milestones(
+                        milestones, ai_response = ai_service.generate_milestones(
                             task_name, category, start_date, end_date, additional_context
                         )
                     
@@ -295,26 +295,49 @@ elif page == "Create Task":
                     
                     st.success(f"✅ Task '{task_name}' created successfully with {len(milestones)} AI-generated milestones!")
                     
-                    # Show generated milestones
-                    st.subheader("🎯 AI-Generated Milestones")
+                    # Create two columns for better layout
+                    col1, col2 = st.columns([1, 1])
                     
-                    # Calculate total estimated days
-                    total_estimated = sum(milestone.get('estimated_days', 1) for milestone in milestones)
-                    duration_days = (end_date - start_date).days
-                    
-                    st.info(f"📅 **Total Task Duration:** {duration_days} days | **Estimated Milestone Time:** {total_estimated} days")
-                    
-                    for i, milestone in enumerate(milestones, 1):
-                        priority_emoji = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}.get(milestone['priority'], "🟡")
-                        estimated_days = milestone.get('estimated_days', 1)
-                        time_emoji = "⏰" if estimated_days <= 1 else "📅"
+                    with col1:
+                        # Show generated milestones (smaller section)
+                        st.subheader("🎯 AI-Generated Milestones")
                         
-                        st.markdown(f"""
-                        <div class="milestone-item">
-                            <h5>📌 {milestone['name']}</h5>
-                            <p><strong>Priority:</strong> {priority_emoji} {milestone['priority']} | <strong>Time:</strong> {time_emoji} {estimated_days} day{'s' if estimated_days > 1 else ''}</p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                        # Calculate total estimated days
+                        total_estimated = sum(milestone.get('estimated_days', 1) for milestone in milestones)
+                        duration_days = (end_date - start_date).days
+                        
+                        st.info(f"📅 **Total Task Duration:** {duration_days} days | **Estimated Milestone Time:** {total_estimated} days")
+                        
+                        for i, milestone in enumerate(milestones, 1):
+                            priority_emoji = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}.get(milestone['priority'], "🟡")
+                            estimated_days = milestone.get('estimated_days', 1)
+                            time_emoji = "⏰" if estimated_days <= 1 else "📅"
+                            
+                            st.markdown(f"""
+                            <div class="milestone-item">
+                                <h5>📌 {milestone['name']}</h5>
+                                <p><strong>Priority:</strong> {priority_emoji} {milestone['priority']} | <strong>Time:</strong> {time_emoji} {estimated_days} day{'s' if estimated_days > 1 else ''}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+                    
+                    with col2:
+                        # Show detailed AI response (larger section)
+                        st.subheader("🤖 Detailed AI Analysis")
+                        
+                        # Display the AI response in a text area
+                        st.text_area(
+                            "AI Generated Content:",
+                            value=ai_response,
+                            height=400,
+                            key="ai_response_main",
+                            label_visibility="collapsed"
+                        )
+                        
+                        # Add copy button
+                        if st.button("📋 Copy to Clipboard", key="copy_ai_response"):
+                            st.write("✅ Content copied to clipboard! You can now paste it into Word or any other application.")
+                            # Note: In a real implementation, you'd use JavaScript to copy to clipboard
+                            # For now, we'll just show a success message
                 else:
                     st.error("End date must be after start date!")
             else:

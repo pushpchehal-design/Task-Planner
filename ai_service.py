@@ -32,7 +32,8 @@ class AITaskPlanner:
         
         if not self.model:
             st.sidebar.warning("⚠️ AI model not available, using fallback milestones")
-            return self._get_fallback_milestones(task_name, category)
+            fallback_milestones = self._get_fallback_milestones(task_name, category)
+            return fallback_milestones, f"Fallback milestones generated for {task_name}"
         
         try:
             # Calculate task duration
@@ -96,10 +97,6 @@ class AITaskPlanner:
             response = self.model.generate_content(prompt)
             
             if response.text:
-                # Show AI response in sidebar for reference
-                st.sidebar.markdown("### 🤖 AI Response")
-                st.sidebar.text_area("AI Generated Content:", response.text, height=200, key="ai_response", label_visibility="collapsed")
-                
                 # Parse the response
                 milestones = self._parse_ai_response(response.text, task_name, duration_days)
                 
@@ -107,13 +104,16 @@ class AITaskPlanner:
                 total_allocated = sum(m.get('estimated_days', 1) for m in milestones)
                 st.sidebar.info(f"📊 Total Allocated: {total_allocated} days (Expected: {duration_days} days)")
                 
-                return milestones
+                # Return both milestones and the raw AI response
+                return milestones, response.text
             else:
                 st.sidebar.warning("⚠️ No AI response received, using fallback")
-                return self._get_fallback_milestones(task_name, category, duration_days)
+                fallback_milestones = self._get_fallback_milestones(task_name, category, duration_days)
+                return fallback_milestones, f"Fallback milestones generated for {task_name}"
                 
         except Exception as e:
-            return self._get_fallback_milestones(task_name, category)
+            fallback_milestones = self._get_fallback_milestones(task_name, category)
+            return fallback_milestones, f"Fallback milestones generated for {task_name}"
     
     def _parse_ai_response(self, response_text: str, task_name: str, expected_total_days: int):
         """Parse AI response into milestone format with time allocation"""
