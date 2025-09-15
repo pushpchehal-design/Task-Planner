@@ -312,14 +312,13 @@ elif page == "Create Task":
                         st.info(f"📅 **Total Task Duration:** {duration_days} days | **Estimated Milestone Time:** {total_estimated} days")
                         
                         for i, milestone in enumerate(milestones, 1):
-                            priority_emoji = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}.get(milestone['priority'], "🟡")
                             estimated_days = milestone.get('estimated_days', 1)
                             time_emoji = "⏰" if estimated_days <= 1 else "📅"
                             
                             st.markdown(f"""
                             <div class="milestone-item">
                                 <h5>📌 {milestone['name']}</h5>
-                                <p><strong>Priority:</strong> {priority_emoji} {milestone['priority']} | <strong>Time:</strong> {time_emoji} {estimated_days} day{'s' if estimated_days > 1 else ''}</p>
+                                <p><strong>Time:</strong> {time_emoji} {estimated_days} day{'s' if estimated_days > 1 else ''}</p>
                             </div>
                             """, unsafe_allow_html=True)
                     
@@ -335,12 +334,6 @@ elif page == "Create Task":
                             key="ai_response_main",
                             label_visibility="collapsed"
                         )
-                        
-                        # Show parsed milestones summary for consistency
-                        st.markdown("**📋 Parsed Milestones Summary:**")
-                        for i, milestone in enumerate(milestones, 1):
-                            estimated_days = milestone.get('estimated_days', 1)
-                            st.write(f"{i}. {milestone['name']} - {estimated_days} day{'s' if estimated_days > 1 else ''}")
                 else:
                     st.error("End date must be after start date!")
             else:
